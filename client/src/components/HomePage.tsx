@@ -5,6 +5,8 @@ import Input from './Input';
 import Select from './Select';
 import Textarea from './Textarea';
 import ServiceCard from './ServiceCard';
+import FeaturedProjectCard from './FeaturedProjectCard';
+import TestimonialCard from './TestimonialCard';
 
 export default function HomePage() {
   return (
@@ -238,28 +240,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary-100">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-negative-500 p-12 md:p-20 text-center relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 -mr-32 -mt-32 rotate-45 transition-transform group-hover:rotate-90 duration-1000"></div>
-            <h3 className="text-display-2 text-white mb-8 relative z-10">Ready to start your electrical project?</h3>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
-              <Button
-                label="Get a Free Estimate"
-                href="#estimate"
-                variant="secondary"
-                className="bg-white text-negative-500 text-base-upper px-10 py-5"
-              />
-              <Button
-                label="Call Us Now"
-                href="tel:5550123456"
-                className="bg-neutral-950 text-white text-base-upper px-10 py-5"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Meet the Owners Section */}
       <section className="py-32 bg-neutral-50" id="team">
@@ -313,6 +294,93 @@ export default function HomePage() {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Projects Section */}
+      <section className="py-32 bg-neutral-950" id="projects">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-24">
+            <h2 className="text-primary-500 font-black text-xs tracking-[0.4em] uppercase mb-4">Our Portfolio</h2>
+            <h3 className="text-display-2 font-black text-white italic">Featured Work</h3>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-0">
+            <FeaturedProjectCard
+              title="Gensco Kirkland"
+              location="Kirkland, WA"
+              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuDMPhChpecZb34tbGDC_MtSdQdv7FiRj4-Mcy5_YPcUql2ypcjlHq90UNrzx3kyQ8BUmvbQeo5KIQqT7udbCYUg3g4F1nFdgoCDrwOgpkuyTZUTv8nu5NHEcpII5IMzh39AVSoqoj83Zlgzx-Egi0zLZIO28wYPe6XWXmGa0pbyyqEx2dbHIr--yJkiJ4aRQapx3Hjkcu524qcTkpWt7u4xuEKecz8cvj_1bCAWvpv0Zg9s_IeTWDaNFNyMmNSb2JsoPIhIIQjGKVM"
+              position="top"
+            />
+            
+            <FeaturedProjectCard
+              title="Gensco Everett"
+              location="Everett, WA"
+              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuAY5Ivnp3HE7wzwBozpfZIERQdtojYsnWyPrawkT9Ouko2tLOS5-zprr_BXQ1S6jlHAD0QA5gyXwHHtDDCG1zGX70BcVic1SXzapft9SQW1OvSBT-fuvlG0bYPwAjQyyzzMseMLXb_WgBIlg8j0G9QmsisWu6Q3DxESoMtTZ7w3kQir4UN50XUywDuoy81EZ4wBNFxnk02PH0Q2Sox67oc-NNHeT_skMrQ5VypSEcfBKjYxZKheOpW_PHe0DMBLU3hdOxhbtdxjldg"
+              position="center"
+              hasBackground
+            />
+            
+            <FeaturedProjectCard
+              title="Park 120"
+              location="Regional WA"
+              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuB53L9qUBIZfx03xe17JAgCVkqjb8llm-Fwb5K_YB291P5kAD3Sa4RCx1ZQ_lGoZlX76pkTzTyi835SIN622OzekfGmjnfddjo_wRi3k4_tTyqt-mCBwvJWr3N5tBoPpXv8p4q3oZ-975-734XLmktT4VIxDCDjfNntXr4K-7QL5Bq1ISNn-dE_ns_rXqZ0xd1o7ikpXid4vYqyTBhFMmyXRZbYPR_oBOMuEXB4xZ_dyi0gmXbj0exwrVb7TtFskiwLsbKN78313ic"
+              position="bottom"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-32 bg-neutral-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center text-center mb-24">
+            <h2 className="text-primary-500 font-black text-xs tracking-[0.4em] uppercase mb-4">Client Feedback</h2>
+            <h3 className="text-display-2 font-black text-neutral-950">What They Say</h3>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12">
+            <TestimonialCard
+              quote="CK Electric was phenomenal. I didn't have to deal with a dispatcher; I spoke with Matt immediately and he was at our facility the next day. The quality of work on our EV chargers was top-tier."
+              clientName="James D."
+              clientTitle="Business Owner"
+              clientLocation="Tacoma"
+              initials="JD"
+              borderColor="primary"
+            />
+            
+            <TestimonialCard
+              quote="When you're doing a total home rewire, you want someone you can trust. Rob walked us through every step and caught things other contractors missed. Efficiency and Quality isn't just a slogan."
+              clientName="Sarah A."
+              clientTitle="Homeowner"
+              clientLocation="Everett"
+              initials="SA"
+              borderColor="neutral"
+            />
+          </div>
+        </div>
+      </section>
+
+            {/* CTA Section */}
+      <section className="py-20 bg-primary-100">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="bg-negative-500 p-12 md:p-20 text-center relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 -mr-32 -mt-32 rotate-45 transition-transform group-hover:rotate-90 duration-1000"></div>
+            <h3 className="text-display-2 text-white mb-8 relative z-10">Ready to start your electrical project?</h3>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
+              <Button
+                label="Get a Free Estimate"
+                href="#estimate"
+                variant="secondary"
+                className="bg-white text-negative-500 text-base-upper px-10 py-5"
+              />
+              <Button
+                label="Call Us Now"
+                href="tel:5550123456"
+                className="bg-neutral-950 text-white text-base-upper px-10 py-5"
+              />
             </div>
           </div>
         </div>
