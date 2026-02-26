@@ -190,7 +190,7 @@ export default function HomePage() {
       </section>
 
       {/* Services Section */}
-      <section className="py-32 bg-primary-100 clip-diagonal-reverse" id="services">
+      <section className="py-32 bg-primary-100 md:clip-diagonal-reverse" id="services">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
           <div className="text-center mb-24">
             <h2 className="text-primary-500 text-base-upper mb-4 md:text-lg lg:text-xl">What We Do</h2>
