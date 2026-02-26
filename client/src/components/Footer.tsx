@@ -1,4 +1,5 @@
-import { Phone, Mail, LocationOn, Facebook, Twitter, LinkedIn, Instagram } from '@mui/icons-material';
+import { Phone, Mail, LocationOn, Facebook, LinkedIn } from '@mui/icons-material';
+import SocialLinks from './SocialLinks';
 
 interface FooterLink {
   label: string;
@@ -34,9 +35,7 @@ export default function Footer() {
 
   const socialLinks = [
     { icon: <Facebook className="text-xl" />, href: "#facebook", label: "Facebook" },
-    { icon: <Twitter className="text-xl" />, href: "#twitter", label: "Twitter" },
     { icon: <LinkedIn className="text-xl" />, href: "#linkedin", label: "LinkedIn" },
-    { icon: <Instagram className="text-xl" />, href: "#instagram", label: "Instagram" },
   ];
 
   return (
@@ -128,21 +127,7 @@ export default function Footer() {
             </ul>
             
             {/* Social Links */}
-            <div className="space-y-4">
-              <h4 className="text-base-bold text-white">Follow Us</h4>
-              <div className="flex gap-3">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    aria-label={social.label}
-                    className="w-10 h-10 bg-neutral-800 text-neutral-400 hover:bg-primary-500 hover:text-white rounded-full flex items-center justify-center transition-colors"
-                  >
-                    {social.icon}
-                  </a>
-                ))}
-              </div>
-            </div>
+            <SocialLinks socialLinks={socialLinks} />
           </div>
         </div>
       </div>
@@ -150,15 +135,10 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex justify-center">
             <p className="text-small text-neutral-400">
               © 2026 CK Electric. All rights reserved.
             </p>
-            <div className="flex items-center gap-6 text-small text-neutral-400">
-              <span>Licensed & Bonded in Washington State</span>
-              <span>•</span>
-              <span>Fully Insured</span>
-            </div>
           </div>
         </div>
       </div>

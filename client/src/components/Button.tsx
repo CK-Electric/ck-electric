@@ -3,7 +3,7 @@ import React from 'react';
 interface ButtonProps {
   label: string;
   icon?: React.ReactNode;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'tertiary';
   onClick?: () => void;
   href?: string;
   type?: 'button' | 'submit' | 'reset';
@@ -25,16 +25,37 @@ export default function Button({
   
   const variantClasses = {
     primary: "bg-primary-500 shadow-[4px_4px_0px_var(--color-primary-900)] hover:shadow-[2px_2px_0px_var(--color-primary-900)] hover:translate-x-[2px] hover:translate-y-[2px]",
-    secondary: "bg-white border-2 border-neutral-950 shadow-[4px_4px_0px_var(--color-neutral-950)] hover:shadow-[2px_2px_0px_var(--color-neutral-950)] hover:translate-x-[2px] hover:translate-y-[2px]"
+    secondary: "bg-white border-2 border-neutral-950 shadow-[4px_4px_0px_var(--color-neutral-950)] hover:shadow-[2px_2px_0px_var(--color-neutral-950)] hover:translate-x-[2px] hover:translate-y-[2px]",
+    tertiary: "inline-flex items-center text-small-upper tracking-widest text-neutral-950 hover:text-primary-500 transition-colors group"
   };
 
   const textClasses = {
     primary: "text-neutral-950",
-    secondary: "text-neutral-950"
+    secondary: "text-neutral-950",
+    tertiary: "text-neutral-950"
   };
 
   // If href is provided, render as a link (SSR-compatible)
   if (href) {
+    if (variant === 'tertiary') {
+      return (
+        <a
+          href={href}
+          className={`${variantClasses[variant]} ${className}`}
+          aria-label={ariaLabel}
+        >
+          <span className="inline-flex items-center">
+            {label}
+            {icon && (
+              <span className=" ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true">
+                {icon}
+              </span>
+            )}
+          </span>
+        </a>
+      );
+    }
+
     return (
       <a
         href={href}
@@ -56,6 +77,26 @@ export default function Button({
   }
 
   // Otherwise render as a button (only use onClick if provided)
+  if (variant === 'tertiary') {
+    return (
+      <button
+        type={type}
+        className={`${variantClasses[variant]} ${className}`}
+        onClick={onClick}
+        aria-label={ariaLabel}
+      >
+        <span className="inline-flex items-center">
+          {label}
+          {icon && (
+            <span className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true">
+              {icon}
+            </span>
+          )}
+        </span>
+      </button>
+    );
+  }
+
   return (
     <button
       type={type}

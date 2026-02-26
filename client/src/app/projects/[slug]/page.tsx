@@ -2,6 +2,7 @@ import { GET_PROJECT_BY_SLUG } from '@/lib/wordpress-queries';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import DetailView from '@/components/DetailView';
 
 interface ProjectNode {
   id: string;
@@ -196,110 +197,78 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     }
 
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Back Navigation */}
-          <div className="mb-8">
-            <Link
-              href="/projects"
-              className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to Projects
-            </Link>
-          </div>
-
-          {/* Project Header */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            {project.featuredImage?.node?.sourceUrl && (
-              <div className="h-64 md:h-96 w-full overflow-hidden">
-                <img
-                  src={project.featuredImage.node.sourceUrl}
-                  alt={project.featuredImage.node.altText || project.title}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
-              </div>
+      <DetailView
+        // Hero Section Props
+        title={project.title}
+        subtitle={`Professional electrical project completed in ${project.projectFields?.specifications?.coverageArea || 'Puget Sound'} with precision and quality workmanship.`}
+        backgroundImage={project.featuredImage?.node?.sourceUrl || 'https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=1920&h=1080&fit=crop'}
+        emailPlaceholder="Enter your email for project details"
+        primaryButtonText="View Project Details"
+        primaryButtonHref="#details"
+        
+        // Content Section Props
+        contentTitle="Project Overview"
+        content={
+          <div className="space-y-4 text-neutral-600 text-medium leading-relaxed">
+            {project.projectFields?.mainContentSection ? (
+              <div dangerouslySetInnerHTML={{ __html: project.projectFields.mainContentSection }} />
+            ) : (
+              <p>
+                This project showcases our commitment to excellence in electrical services. 
+                From initial consultation to final completion, we ensure every aspect meets the highest standards of quality and safety.
+              </p>
             )}
-            
-            <div className="p-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                {project.title}
-              </h1>
-
-              {/* Specifications */}
-              {project.projectFields?.specifications && (
-                <div className="mb-8 p-6 bg-gray-50 rounded-lg">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">Project Specifications</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {project.projectFields.specifications.coverageArea && (
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Location</div>
-                        <div className="font-semibold text-gray-900">{project.projectFields.specifications.coverageArea}</div>
-                      </div>
-                    ) || (
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Location</div>
-                        <div className="font-semibold text-gray-900">Not specified</div>
-                      </div>
-                    )}
-                    {project.projectFields.specifications.responseTime && (
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Duration</div>
-                        <div className="font-semibold text-gray-900">{project.projectFields.specifications.responseTime}</div>
-                      </div>
-                    ) || (
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Duration</div>
-                        <div className="font-semibold text-gray-900">Not specified</div>
-                      </div>
-                    )}
-                    {project.projectFields.specifications.warranty && (
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Warranty</div>
-                        <div className="font-semibold text-gray-900">{project.projectFields.specifications.warranty}</div>
-                      </div>
-                    ) || (
-                      <div className="text-center">
-                        <div className="text-sm text-gray-600 mb-1">Warranty</div>
-                        <div className="font-semibold text-gray-900">Not specified</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Main Content */}
-              {project.projectFields?.mainContentSection && (
-                <div className="prose prose-lg max-w-none">
-                  <div 
-                    className="text-gray-700 leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: project.projectFields.mainContentSection }} 
-                  />
-                </div>
-              )}
-            </div>
           </div>
-
-          {/* Contact Section */}
-          <div className="mt-12 bg-blue-600 rounded-lg p-8 text-center">
-            <h2 className="text-2xl font-bold text-white mb-4">Interested in This Project?</h2>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Contact us to learn more about how we can help with your next project. Our team is ready to discuss your requirements.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-100 transition-colors font-medium">
-                Request a Quote
-              </button>
-              <button className="border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-blue-600 transition-colors font-medium">
-                Contact Us
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+        }
+        
+        // Sidebar Specifications Props
+        specifications={[
+          {
+            label: 'Location',
+            value: project.projectFields?.specifications?.coverageArea || 'Puget Sound'
+          },
+          {
+            label: 'Duration',
+            value: project.projectFields?.specifications?.responseTime || '2-4 weeks'
+          },
+          {
+            label: 'Warranty',
+            value: project.projectFields?.specifications?.warranty || '5 Years'
+          }
+        ]}
+        ctaText="Get a Free Estimate"
+        ctaHref="/request-estimate"
+        
+        // Related Section Props
+        relatedTitle="Related Projects"
+        relatedSectionType="projects"
+        relatedItems={[
+          {
+            id: '1',
+            title: 'Commercial Office Renovation',
+            description: 'Complete electrical overhaul of downtown office building with modern energy-efficient systems.',
+            image: 'https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=400&h=300&fit=crop',
+            link: '/projects/commercial-office-renovation',
+            category: 'Commercial'
+          },
+          {
+            id: '2',
+            title: 'Industrial Warehouse Installation',
+            description: 'Large-scale electrical installation for new industrial facility with advanced safety systems.',
+            image: 'https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=400&h=300&fit=crop',
+            link: '/projects/industrial-warehouse',
+            category: 'Industrial'
+          },
+          {
+            id: '3',
+            title: 'Residential Upgrade Project',
+            description: 'Complete home electrical system upgrade with modern panel and smart home integration.',
+            image: 'https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=400&h=300&fit=crop',
+            link: '/projects/residential-upgrade',
+            category: 'Residential'
+          }
+        ]}
+      />
     );
   } catch (error) {
     console.error('Error loading project:', error);

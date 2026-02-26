@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import HomePage from '@/components/HomePage';
-import Footer from '@/components/Footer';
 
 // Generate metadata for the home page - SSR
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,10 +31,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Home() {
-  return (
-    <>
-      <HomePage />
-      <Footer />
-    </>
-  );
+  return <HomePage />;
 }

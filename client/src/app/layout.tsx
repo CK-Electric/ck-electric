@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
+import HeaderClient from "@/components/HeaderClient";
+import Footer from "@/components/Footer";
 import MuiProvider from "@/components/MuiProvider";
 
 const geistSans = Geist({
@@ -36,10 +37,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
         <MuiProvider>
-          <Header />
+          <HeaderClient />
           <main>
             {children}
           </main>
+          <Footer />
         </MuiProvider>
       </body>
     </html>

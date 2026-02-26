@@ -2,7 +2,8 @@ import { GET_ALL_PROJECTS } from '@/lib/wordpress-queries';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import Footer from '@/components/Footer';
+import HeroSection from '@/components/HeroSection';
+import ProjectCard from '@/components/ProjectCard';
 
 interface ProjectNode {
   id: string;
@@ -119,99 +120,55 @@ export default async function ProjectsPage() {
 
     return (
       <>
-        <div className="min-h-screen bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Our Projects
-              </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Discover our latest work and see how we've helped clients achieve their goals
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map((project) => (
-                <div key={project.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                  {project.featuredImage?.node?.sourceUrl && (
-                    <div className="h-48 w-full overflow-hidden">
-                      <img
-                        src={project.featuredImage.node.sourceUrl}
-                        alt={project.featuredImage.node.altText || project.title}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-                  
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">
-                      {project.title}
-                    </h3>
-                    
-                    {project.projectFields?.specifications && (
-                      <div className="mb-4">
-                        <div className="space-y-2 text-sm">
-                          {project.projectFields.specifications.coverageArea && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Location:</span>
-                              <span className="font-medium">{project.projectFields.specifications.coverageArea}</span>
-                            </div>
-                          )}
-                          {project.projectFields.specifications.responseTime && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Duration:</span>
-                              <span className="font-medium">{project.projectFields.specifications.responseTime}</span>
-                            </div>
-                          )}
-                          {project.projectFields.specifications.warranty && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Warranty:</span>
-                              <span className="font-medium">{project.projectFields.specifications.warranty}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    
-                    <Link
-                      href={`/projects/${project.slug}`}
-                      className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      View Project Details
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
+        <HeroSection
+          title="Our Projects"
+          subtitle="Discover our latest work and see how we've helped clients achieve their goals with professional electrical solutions across Puget Sound."
+          primaryButtonText="Request a free estimate"
+          primaryButtonHref="#estimate"
+          secondaryButtonText="Call us now"
+          secondaryButtonHref="#contact"
+          backgroundImage="https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=1920&h=1080&fit=crop"
+        />
+        
+        <section className="py-20 bg-neutral-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {projects.map((project) => (
+              <ProjectCard
+                key={project.id}
+                image={project.featuredImage?.node?.sourceUrl || 'https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=400&h=300&fit=crop'}
+                location={project.projectFields?.specifications?.coverageArea || 'Puget Sound'}
+                projectName={project.title}
+                category="Commercial"
+                description="Professional electrical project completed with precision and quality workmanship."
+                link={`/projects/${project.slug}`}
+              />
+            ))}
           </div>
         </div>
-        <Footer />
+      </section>
       </>
     );
   } catch (error) {
     console.error('Error loading projects:', error);
     return (
-      <>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Projects</h2>
-            <p className="text-gray-600 mb-4">There was an error loading projects. Please try again later.</p>
-            <Link
-              href="/"
-              className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Back to Home
-            </Link>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Projects</h2>
+          <p className="text-gray-600 mb-4">There was an error loading projects. Please try again later.</p>
+          <Link
+            href="/"
+            className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Home
+          </Link>
         </div>
-        <Footer />
-      </>
+      </div>
     );
   }
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react";
 import Link from "next/link";
 import Button from "./Button";
@@ -6,7 +8,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 
-export default function Header() {
+export default function HeaderClient() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -191,47 +193,31 @@ export default function Header() {
                 </ul>
               </nav>
 
-              {/* Contact Section */}
-              <div className="border-t border-neutral-200 p-4 space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <EmailIcon 
-                      sx={{ 
-                        color: 'rgb(38, 38, 38)', 
-                        fontSize: '20px'
-                      }} 
-                    />
-                    <a
-                      href="mailto:hello@ckelectric.com"
-                      className="text-base-bold text-neutral-950 whitespace-nowrap hover:underline"
-                      aria-label="Email us at hello@ckelectric.com"
-                    >
-                      hello@ckelectric.com
-                    </a>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <PhoneIcon 
-                      sx={{ 
-                        color: 'rgb(38, 38, 38)', 
-                        fontSize: '20px'
-                      }} 
-                    />
-                    <a
-                      href="tel:5550123456"
-                      className="text-base-bold text-neutral-950 whitespace-nowrap hover:underline"
-                      aria-label="Call us at (555) 012-3456"
-                    >
-                      (555) 012-3456
-                    </a>
-                  </div>
+              {/* Mobile Contact Section */}
+              <div className="p-4 border-t border-neutral-200">
+                <div className="space-y-4">
+                  <a
+                    href="tel:5550123456"
+                    className="flex items-center gap-3 text-neutral-950 hover:text-primary-500 transition-colors"
+                  >
+                    <PhoneIcon sx={{ fontSize: '20px' }} />
+                    <span className="text-base-bold">(555) 012-3456</span>
+                  </a>
+                  <a
+                    href="mailto:hello@ckelectric.com"
+                    className="flex items-center gap-3 text-neutral-950 hover:text-primary-500 transition-colors"
+                  >
+                    <EmailIcon sx={{ fontSize: '20px' }} />
+                    <span className="text-base-bold">hello@ckelectric.com</span>
+                  </a>
+                  <Button
+                    label="Call Now"
+                    icon={<PhoneIcon sx={{ color: 'rgb(38, 38, 38)', fontSize: '16px' }} />}
+                    href="tel:5550123456"
+                    ariaLabel="Call now at (555) 012-3456"
+                    className="w-full"
+                  />
                 </div>
-                <Button
-                  label="Call Now"
-                  icon={<PhoneIcon sx={{ color: 'rgb(38, 38, 38)', fontSize: '16px' }} />}
-                  href="tel:5550123456"
-                  ariaLabel="Call now at (555) 012-3456"
-                  className="w-full"
-                />
               </div>
             </div>
           </div>

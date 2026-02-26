@@ -7,6 +7,7 @@ import Textarea from './Textarea';
 import ServiceCard from './ServiceCard';
 import FeaturedProjectCard from './FeaturedProjectCard';
 import TestimonialCard from './TestimonialCard';
+import CtaBox from './CtaBox';
 
 export default function HomePage() {
   return (
@@ -194,7 +195,6 @@ export default function HomePage() {
               title="Commercial TIs"
               description="Expert build-outs and improvements for retail, office, and industrial spaces across the corridor."
               link="#commercial-tis"
-              borderColor="primary-500"
             />
             
             <ServiceCard
@@ -202,7 +202,6 @@ export default function HomePage() {
               title="Wiring & Rewiring"
               description="Modernizing outdated electrical systems for safety, efficiency, and code compliance."
               link="#wiring-rewiring"
-              borderColor="primary-400"
             />
             
             <ServiceCard
@@ -210,7 +209,6 @@ export default function HomePage() {
               title="Panel Upgrades"
               description="Support high-demand appliances and ensure modern safety standards with panel replacements."
               link="#panel-upgrades"
-              borderColor="primary-500"
             />
             
             <ServiceCard
@@ -218,7 +216,6 @@ export default function HomePage() {
               title="Lighting Solutions"
               description="Custom LED design, landscape lighting, and smart home lighting controls for security."
               link="#lighting-solutions"
-              borderColor="primary-400"
             />
             
             <ServiceCard
@@ -226,7 +223,6 @@ export default function HomePage() {
               title="EV Chargers"
               description="Fast, certified installation of Tesla, JuiceBox, and ChargePoint residential chargers."
               link="#ev-chargers"
-              borderColor="primary-500"
             />
             
             <ServiceCard
@@ -234,7 +230,6 @@ export default function HomePage() {
               title="Emergency Repair"
               description="Rapid response for electrical failures and proactive preventative maintenance."
               link="#emergency-repair"
-              borderColor="primary-400"
             />
           </div>
         </div>
@@ -363,28 +358,14 @@ export default function HomePage() {
         </div>
       </section>
 
-            {/* CTA Section */}
-      <section className="py-20 bg-primary-100">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-negative-500 p-12 md:p-20 text-center relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 -mr-32 -mt-32 rotate-45 transition-transform group-hover:rotate-90 duration-1000"></div>
-            <h3 className="text-display-2 text-white mb-8 relative z-10">Ready to start your electrical project?</h3>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
-              <Button
-                label="Get a Free Estimate"
-                href="#estimate"
-                variant="secondary"
-                className="bg-white text-negative-500 text-base-upper px-10 py-5"
-              />
-              <Button
-                label="Call Us Now"
-                href="tel:5550123456"
-                className="bg-neutral-950 text-white text-base-upper px-10 py-5"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      <CtaBox
+        title="Ready to start your electrical project?"
+        primaryButtonText="Get a Free Estimate"
+        primaryButtonHref="/request-estimate"
+        secondaryButtonText="Call Us Now"
+        secondaryButtonHref="tel:5550123456"
+      />
+
     </main>
   );
 }
