@@ -9,7 +9,7 @@ import FeaturedProjectCard from './FeaturedProjectCard';
 import TestimonialCard from './TestimonialCard';
 import CtaBox from './CtaBox';
 import { fetchWordPressGraphQL } from '../lib/wordpress-graphql';
-import { GET_LANDING_PAGE, LandingPageData } from '../lib/wordpress-queries';
+import { GET_LANDING_PAGE, LandingPageData, GET_OWNERS, OwnersData } from '../lib/wordpress-queries';
 
 export default async function HomePage() {
   // Fetch landing page data from WordPress
@@ -22,17 +22,31 @@ export default async function HomePage() {
     console.error('Error fetching landing page data:', error);
   }
 
+  // Fetch owners data from WordPress
+  let ownersData: OwnersData | null = null;
+  
+  try {
+    const response = await fetchWordPressGraphQL(GET_OWNERS);
+    ownersData = response.data as OwnersData;
+  } catch (error) {
+    console.error('Error fetching owners data:', error);
+  }
+
   // Use WordPress data if available, otherwise use fallbacks
   const heroTitle = landingPageData?.page.landingPage.heroTitle || "Efficiency and Quality.";
   const heroSubtitle = landingPageData?.page.landingPage.heroSubtitle || "Talk directly with a licensed electrician. No call centers, no middlemen. Fast response and industrial-grade quality for every project.";
   const tag = landingPageData?.page.landingPage.tag || "Direct Access to Licensed Experts";
   const aboutTitle = landingPageData?.page.landingPage.aboutUs.title || "NO MIDDLEMEN. NO MESS.";
   const aboutSubtitle = landingPageData?.page.landingPage.aboutUs.subtitle || "Locally Owned & Expertly Operated";
-  const aboutDescription = landingPageData?.page.landingPage.aboutUs.description || "<p>CK Electric was founded on a simple principle: people deserve to talk to the experts doing the work. When you call us, you speak directly with Rob or Matt, not a call center.</p><p>We combine industrial-grade precision with residential-level care. Whether it's a major commercial TI or a home panel upgrade, we bring decades of experience.</p>";
+  const aboutDescription = landingPageData?.page.landingPage.aboutUs.description || "<p>CK Electric was founded on a simple principle: people deserve to talk to experts doing the work. When you call us, you speak directly with Rob or Matt, not a call center.</p><p>We combine industrial-grade precision with residential-level care. Whether it's a major commercial TI or a home panel upgrade, we bring decades of experience.</p>";
   const feature1Title = landingPageData?.page.landingPage.heroItems.feature1.title1 || "LICENSED & BONDED";
   const feature1Description = landingPageData?.page.landingPage.heroItems.feature1.description1 || "Full Compliance Guaranteed";
   const feature2Title = landingPageData?.page.landingPage.heroItems.item2.title || "FAST RESPONSE";
   const feature2Description = landingPageData?.page.landingPage.heroItems.item2.description || "Same-day Estimates Available";
+
+  // Extract owners data
+  const mattOwner = ownersData?.matt || null;
+  const robOwner = ownersData?.rob || null;
 
   return (
     <main className="bg-primary-50">
@@ -294,47 +308,81 @@ export default async function HomePage() {
           </div>
           
           <div className="grid md:grid-cols-2 gap-12">
-            {/* Rob Konen */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-neutral-950 rotate-1 group-hover:rotate-0 transition-transform"></div>
-              <div className="relative bg-white p-8 flex flex-col sm:flex-row gap-8 items-center border border-neutral-950/10">
-                <div className="w-40 h-40 bg-neutral-200 flex-shrink-0 overflow-hidden skew-x-3">
-                  <img 
-                    alt="Rob Konen" 
-                    className="w-full h-full object-cover -skew-x-3 grayscale group-hover:grayscale-0 transition-all duration-500 scale-110" 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC54c9kdYvsNlkyXjT6z6v8p3uOypYBLFZdsDaf0NhjD2tHmxfM4Ao6LeGpm5VZ0NKoyjuigsjc-ed6yeqEa8CqePwCtOAibYOM0Yu6b9vm9Q_vkJI8FUrQlvugOCrGNtMaOEL4_WaR9E73rez8DtYP7OxcrN-PijxJk_BgV_PcGXKj4in-8bauVmApyMoIEBCVjdz3HRcB3deKvBTWbFLUndFMYQNA5QpLLNTNXoQ4riooneUKIo0JBlH3oqq_ce9RCC3EpDzJ4yg"
-                  />
-                </div>
-                <div>
-                  <h4 className="text-display-4 font-black text-neutral-950">Rob Konen</h4>
-                  <p className="text-primary-500 text-[10px] font-black uppercase tracking-widest mb-6">Co-Owner / Lead Electrician</p>
-                  <button className="bg-primary-500 text-neutral-950 font-black text-[10px] uppercase tracking-widest px-6 py-3 shadow-[4px_4px_0px_0px_rgba(49,36,7,1)] hover:shadow-none transition-all">
-                    Contact Rob
-                  </button>
+            {robOwner && (
+              <div className="relative group">
+                {/* Rob Konen */}
+                <div className="absolute inset-0 bg-neutral-950 rotate-1 group-hover:rotate-0 transition-transform"></div>
+                <div className="relative bg-white p-8 flex flex-col sm:flex-row gap-8 items-center border border-neutral-950/10">
+                  <div className="w-40 h-40 bg-neutral-200 flex-shrink-0 overflow-hidden skew-x-3">
+                    {robOwner.featuredImage?.node?.mediaItemUrl ? (
+                      <img 
+                        alt={robOwner.owners.fullName} 
+                        className="w-full h-full object-cover -skew-x-3 grayscale group-hover:grayscale-0 transition-all duration-500 scale-110" 
+                        src={robOwner.featuredImage.node.mediaItemUrl}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-neutral-300 flex items-center justify-center">
+                        <span className="text-neutral-600 text-sm">No Image</span>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-display-4 font-black text-neutral-950">{robOwner.owners.fullName}</h4>
+                    <p className="text-primary-500 text-[10px] font-black uppercase tracking-widest mb-6">{robOwner.owners.position}</p>
+                    {robOwner.owners.phoneNumber ? (
+                      <a 
+                        href={`tel:${robOwner.owners.phoneNumber}`}
+                        className="bg-primary-500 text-neutral-950 font-black text-[10px] uppercase tracking-widest px-6 py-3 shadow-[4px_4px_0px_0px_rgba(49,36,7,1)] hover:shadow-none transition-all inline-block"
+                      >
+                        Contact {robOwner.owners.fullName.split(' ')[0]}
+                      </a>
+                    ) : (
+                      <span className="text-neutral-500 text-[10px] font-black uppercase tracking-widest px-6 py-3 inline-block">
+                        No Contact Info
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             
-            {/* Matt Cheshier */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-neutral-950 -rotate-1 group-hover:rotate-0 transition-transform"></div>
-              <div className="relative bg-white p-8 flex flex-col sm:flex-row gap-8 items-center border border-neutral-950/10">
-                <div className="w-40 h-40 bg-neutral-200 flex-shrink-0 overflow-hidden -skew-x-3">
-                  <img 
-                    alt="Matt Cheshier" 
-                    className="w-full h-full object-cover skew-x-3 grayscale group-hover:grayscale-0 transition-all duration-500 scale-110" 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA55VjAPh4_ZCfHXxXV-c7UXvxIRs5VVjoFXxXDNt_pfU8X9phwqNLyJOyfoy0AMqmqJlfo8HhC-ujqxC26Q6T8eu-qjL8vcQy9fyt9eSg3upZk8PSSU00XG682KplKgi5SRmHizj2u8TOlzCtisOB3NtQ-PMYaEm_cCROFJN8R9mxteqDkF7TW7VugQnpQGkZTJtQfmLIIqWVd3j0sR_oFrO8GAZhcnqy54auas5usMWNQubl1bIDluGq_OOmxBIXkGeBZ8L7b6Ls"
-                  />
-                </div>
-                <div>
-                  <h4 className="text-display-4 font-black text-neutral-950">Matt Cheshier</h4>
-                  <p className="text-primary-500 text-[10px] font-black uppercase tracking-widest mb-6">Co-Owner / Lead Electrician</p>
-                  <button className="bg-primary-500 text-neutral-950 font-black text-[10px] uppercase tracking-widest px-6 py-3 shadow-[4px_4px_0px_0px_rgba(49,36,7,1)] hover:shadow-none transition-all">
-                    Contact Matt
-                  </button>
+            {mattOwner && (
+              <div className="relative group">
+                {/* Matt Cheshier */}
+                <div className="absolute inset-0 bg-neutral-950 -rotate-1 group-hover:rotate-0 transition-transform"></div>
+                <div className="relative bg-white p-8 flex flex-col sm:flex-row gap-8 items-center border border-neutral-950/10">
+                  <div className="w-40 h-40 bg-neutral-200 flex-shrink-0 overflow-hidden -skew-x-3">
+                    {mattOwner.featuredImage?.node?.mediaItemUrl ? (
+                      <img 
+                        alt={mattOwner.owners.fullName} 
+                        className="w-full h-full object-cover skew-x-3 grayscale group-hover:grayscale-0 transition-all duration-500 scale-110" 
+                        src={mattOwner.featuredImage.node.mediaItemUrl}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-neutral-300 flex items-center justify-center">
+                        <span className="text-neutral-600 text-sm">No Image</span>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-display-4 font-black text-neutral-950">{mattOwner.owners.fullName}</h4>
+                    <p className="text-primary-500 text-[10px] font-black uppercase tracking-widest mb-6">{mattOwner.owners.position}</p>
+                    {mattOwner.owners.phoneNumber ? (
+                      <a 
+                        href={`tel:${mattOwner.owners.phoneNumber}`}
+                        className="bg-primary-500 text-neutral-950 font-black text-[10px] uppercase tracking-widest px-6 py-3 shadow-[4px_4px_0px_0px_rgba(49,36,7,1)] hover:shadow-none transition-all inline-block"
+                      >
+                        Contact {mattOwner.owners.fullName.split(' ')[0]}
+                      </a>
+                    ) : (
+                      <span className="text-neutral-500 text-[10px] font-black uppercase tracking-widest px-6 py-3 inline-block">
+                        No Contact Info
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
