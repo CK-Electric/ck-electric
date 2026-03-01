@@ -1,3 +1,74 @@
+export const NEW_QUERY = `
+  query GetAllPosts($first: Int, $after: String) {
+    posts(first: $first, after: $after) {
+      nodes {
+        id
+        title
+        slug
+        content
+        excerpt
+        date
+        modified
+        author {
+          node {
+            name
+          }
+        }
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        categories {
+          nodes {
+            name
+            slug
+          }
+        }
+        tags {
+          nodes {
+            name
+            slug
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`;
+
+export const GET_ALL_PAGES = `
+  query GetAllPages($first: Int, $after: String) {
+    pages(first: $first, after: $after) {
+      nodes {
+        id
+        title
+        slug
+        content
+        featuredImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        seo {
+          metaDesc
+          metaKeywords
+          opengraphDescription
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+`;
+
 export const GET_ALL_POSTS = `
   query GetAllPosts($first: Int, $after: String) {
     posts(first: $first, after: $after) {
