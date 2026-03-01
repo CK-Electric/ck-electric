@@ -4,6 +4,7 @@
 export interface CompanyLogo {
   node: {
     mediaItemUrl: string;
+    altText: string;
   };
 }
 
@@ -68,6 +69,7 @@ export interface LandingPage {
   heroItems: HeroItems;
   heroFooter: HeroFooter;
   aboutUs: AboutUs;
+  tag: string;
 }
 
 export interface FeaturedImageNode {
@@ -80,6 +82,8 @@ export interface FeaturedImage {
 
 export interface LandingPageData {
   page: {
+    title: string;
+    content: string;
     featuredImage: FeaturedImage;
     ctaButtonsHero: CtaButtonsHero;
     landingPage: LandingPage;
@@ -94,6 +98,15 @@ export interface LandingPageData {
       metaRobotsNoindex: string;
       opengraphAuthor: string;
       opengraphDescription: string;
+      opengraphModifiedTime: string;
+      opengraphPublishedTime: string;
+      opengraphPublisher: string;
+      opengraphSiteName: string;
+      opengraphTitle: string;
+      opengraphType: string;
+      opengraphUrl: string;
+      readingTime: number;
+      title: string;
     };
   };
 }

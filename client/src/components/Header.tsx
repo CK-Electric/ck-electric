@@ -9,20 +9,18 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { fetchWordPressGraphQL } from '../lib/wordpress-graphql';
 import { GET_LANDING_PAGE } from '../lib/wordpress-queries';
-import { LandingPageData } from '../lib/wordpress-types';
-
-interface CompanyLogo {
-  node: {
-    link: string;
-    mediaItemUrl: string;
-    description: string | null;
-    altText: string;
-  };
-}
+import { LandingPageData, CompanyLogo } from '../lib/wordpress-types';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [headerData, setHeaderData] = useState({
+  const [headerData, setHeaderData] = useState<{
+    serviceArea: string;
+    slogan: string;
+    contactEmail: string;
+    contactPhone: string;
+    companyLogo: CompanyLogo | null;
+    loading: boolean;
+  }>({
     serviceArea: "Not Available",
     slogan: "Not Available", 
     contactEmail: "Not Available",
@@ -35,9 +33,11 @@ export default function Header() {
   useEffect(() => {
     async function fetchHeaderData() {
       console.log('🚀 Header: Starting data fetch');
-      
+  
+      let landingPageData: LandingPageData | null = null;
+  
       try {
-        const response = await fetchWordPressGraphQL(GET_LANDING_PAGE);
+        const response = await fetchWordPressGraphQL<LandingPageData>(GET_LANDING_PAGE);
         console.log('📋 Header: Raw landing page data:', JSON.stringify(response, null, 2));
         
         if (response && response.data && response.data.page) {

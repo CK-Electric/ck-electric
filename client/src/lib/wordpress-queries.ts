@@ -198,6 +198,7 @@ export const GET_LANDING_PAGE = `
           companyLogo {
             node {
               mediaItemUrl
+              altText
             }
           }
           contactEmail
@@ -240,6 +241,7 @@ export const GET_LANDING_PAGE = `
             item3
           }
         }
+        tag
       }
       seo {
         canonical
@@ -288,7 +290,7 @@ export const GET_ALL_PROJECTS = `
 
 export const GET_PROJECTS_PAGE = `
   query NewQuery {
-    page(id: "cG9zdDoyMzQ=") {
+    page(id: "cG9zdDoyNDk=") {
       featuredImage {
         node {
           mediaItemUrl
@@ -301,22 +303,16 @@ export const GET_PROJECTS_PAGE = `
         metaRobotsNoindex
         opengraphAuthor
         opengraphDescription
+        opengraphUrl
       }
-      ctaButtonsHero {
-        primaryCtaLink
-        primaryCtaText
-        secondaryCtaLink
-        secondaryCtaText
-      }
-      title
-      content
+      id
     }
   }
 `;
 
 export const GET_BLOG_PAGE = `
-  query NewQuery {
-    page(id: "cG9zdDoyNDk=") {
+  query GetBlogPage($id: ID!) {
+    page(id: $id) {
       featuredImage {
         node {
           mediaItemUrl
@@ -469,3 +465,12 @@ export const GET_PROJECT_BY_SLUG = `
     }
   }
 `;
+
+// Re-export types from wordpress-types for convenience
+export type { 
+  BlogPageData, 
+  ProjectsPageData,
+  ServicesPageData,
+  LandingPageData,
+  OwnersData 
+} from './wordpress-types';

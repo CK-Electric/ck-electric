@@ -158,7 +158,7 @@ export default async function PagesPage() {
                     </h2>
                     <div 
                       className="text-gray-600 line-clamp-3 mb-4"
-                      dangerouslySetInnerHTML={{ __html: page.excerpt }}
+                      dangerouslySetInnerHTML={{ __html: page.excerpt || '' }}
                     />
                     <Link
                       href={`/pages/${page.slug}`}
