@@ -41,6 +41,29 @@ export const NEW_QUERY = `
   }
 `;
 
+export const GET_PAGE_BY_SLUG = `
+  query GetPageBySlug($slug: ID!) {
+    page(id: $slug, idType: SLUG) {
+      id
+      title
+      slug
+      content
+      excerpt
+      featuredImage {
+        node {
+          sourceUrl
+          altText
+        }
+      }
+      seo {
+        metaDesc
+        metaKeywords
+        opengraphDescription
+      }
+    }
+  }
+`;
+
 export const GET_ALL_PAGES = `
   query GetAllPages($first: Int, $after: String) {
     pages(first: $first, after: $after) {
