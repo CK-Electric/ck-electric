@@ -570,6 +570,40 @@ export const GET_PROJECT_BY_SLUG = `
   }
 `;
 
+export const GET_CONTACT_PAGE = `
+  query GetContactPage {
+    page(id: "cG9zdDoyNTQ=") {
+      content
+      title
+      seo {
+        metaDesc
+        metaKeywords
+      }
+      contactInformation {
+        businessHours
+        facebookLink
+        extraInfo {
+          subtitle
+          title
+        }
+        forwardedTo {
+          mattEmail
+          robEmail
+        }
+        googleMapsRating {
+          locationLink
+          rating
+        }
+        mattPhoneNumber
+        principalEmail
+        robPhoneNumber
+        location
+      }
+      slug
+    }
+  }
+`;
+
 // Re-export types from wordpress-types for convenience
 export type { 
   BlogPageData, 

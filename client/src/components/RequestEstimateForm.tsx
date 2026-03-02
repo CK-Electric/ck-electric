@@ -68,7 +68,6 @@ export default function RequestEstimateForm({ pageData }: RequestEstimateFormPro
 
   const socialLinks = [
     { icon: <Facebook className="text-xl" />, href: "#facebook", label: "Facebook" },
-    { icon: <LinkedIn className="text-xl" />, href: "#linkedin", label: "LinkedIn" },
   ];
 
   return (

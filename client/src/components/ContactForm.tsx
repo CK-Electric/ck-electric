@@ -7,8 +7,61 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import SocialLinks from '@/components/SocialLinks';
 
+// Helper function to strip HTML tags and decode entities
+function stripHtml(html: string | undefined): string {
+  if (!html) return '';
+  
+  // Remove HTML tags
+  const text = html.replace(/<[^>]*>/g, '');
+  
+  // Decode HTML entities
+  const decoded = text
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8216;/g, "'")
+    .replace(/&#8220;/g, '"')
+    .replace(/&#8221;/g, '"')
+    .replace(/&#8211;/g, '–')
+    .replace(/&#8212;/g, '—')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+  
+  // Clean up extra whitespace
+  return decoded.replace(/\s+/g, ' ').trim();
+}
+
 interface ContactFormProps {
-  pageData: any;
+  pageData: {
+    title?: string;
+    content?: string;
+    seo?: {
+      metaDesc?: string;
+      metaKeywords?: string;
+    };
+    contactInformation?: {
+      businessHours?: string;
+      facebookLink?: string;
+      extraInfo?: {
+        subtitle?: string;
+        title?: string;
+      };
+      forwardedTo?: {
+        mattEmail?: string;
+        robEmail?: string;
+      };
+      googleMapsRating?: {
+        locationLink?: string;
+        rating?: string;
+      };
+      mattPhoneNumber?: string;
+      principalEmail?: string;
+      robPhoneNumber?: string;
+      location?: string;
+    };
+  } | null;
 }
 
 export default function ContactForm({ pageData }: ContactFormProps) {
@@ -67,15 +120,14 @@ export default function ContactForm({ pageData }: ContactFormProps) {
   };
 
   const socialLinks = [
-    { icon: <Facebook className="text-xl" />, href: "#facebook", label: "Facebook" },
-    { icon: <LinkedIn className="text-xl" />, href: "#linkedin", label: "LinkedIn" },
+    { icon: <Facebook className="text-xl" />, href: pageData?.contactInformation?.facebookLink || "#facebook", label: "Facebook" },
   ];
 
   return (
     <>
       <HeroSection
-        title="Get in Touch"
-        subtitle="Ready to start your electrical project? Contact our team for expert service and competitive pricing across Puget Sound."
+        title={pageData?.title || "Get in Touch"}
+        subtitle={stripHtml(pageData?.content) || "Ready to start your electrical project? Contact our team for expert service and competitive pricing across Puget Sound."}
         hideCTA={true}
         backgroundImage="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&h=1080&fit=crop"
       />
@@ -98,8 +150,8 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                         </div>
                         <div>
                           <p className="text-base-bold text-neutral-950">Phone Support</p>
-                          <p className="text-base text-neutral-600">Rob: (555) 012-3456</p>
-                          <p className="text-base text-neutral-600">Matt: (555) 012-3456</p>
+                          <p className="text-base text-neutral-600">Rob: {pageData?.contactInformation?.robPhoneNumber || "(555) 012-3456"}</p>
+                          <p className="text-base text-neutral-600">Matt: {pageData?.contactInformation?.mattPhoneNumber || "(555) 012-3456"}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-4">
@@ -108,7 +160,7 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                         </div>
                         <div>
                           <p className="text-base-bold text-neutral-950">Email Us</p>
-                          <p className="text-base text-neutral-600">hello@ckelectricps.com</p>
+                          <p className="text-base text-neutral-600">{pageData?.contactInformation?.principalEmail || "hello@ckelectricps.com"}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-4">
@@ -117,7 +169,7 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                         </div>
                         <div>
                           <p className="text-base-bold text-neutral-950">Location</p>
-                          <p className="text-base text-neutral-600">Serving Tacoma to Skagit Valley, WA</p>
+                          <p className="text-base text-neutral-600">{pageData?.contactInformation?.location || "Serving Tacoma to Skagit Valley, WA"}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-4">
@@ -126,8 +178,7 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                         </div>
                         <div>
                           <p className="text-base-bold text-neutral-950">Business Hours</p>
-                          <p className="text-base text-neutral-600">Mon-Fri: 8:00am - 6:00pm</p>
-                          <p className="text-base text-neutral-600">Emergency support available 24/7</p>
+                          <p className="text-base text-neutral-600">{pageData?.contactInformation?.businessHours || "Mon-Fri: 8:00am - 6:00pm"}</p>
                         </div>
                       </div>
                     </div>
@@ -135,7 +186,7 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                   
                   {/* Trust Indicators */}
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-6 bg-white rounded-2xl border border-neutral-200">
+                    {/* <div className="p-6 bg-white rounded-2xl border border-neutral-200">
                       <div className="flex text-primary-500 mb-2">
                         <Star className="text-2xl" />
                         <Star className="text-2xl" />
@@ -143,19 +194,20 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                         <Star className="text-2xl" />
                         <Star className="text-2xl" />
                       </div>
-                      <p className="text-base-bold text-neutral-950 font-black">4.9 Stars</p>
+                      <p className="text-base-bold text-neutral-950 font-black">{pageData?.contactInformation?.googleMapsRating?.rating || "4.9 Stars"}</p>
                       <p className="text-small-upper text-neutral-500">Google Rating</p>
-                    </div>
+                    </div> */}
                     <div className="p-6 bg-white rounded-2xl border border-neutral-200">
                       <CheckCircle className="text-3xl text-primary-500 mb-2 block" />
-                      <p className="text-base-bold text-neutral-950 font-black leading-tight">Fully Licensed & Insured</p>
-                      <p className="text-small-upper text-neutral-500">Certified Professional</p>
+                      <p className="text-base-bold text-neutral-950 font-black leading-tight">{pageData?.contactInformation?.extraInfo?.title || "Fully Licensed & Insured"}</p>
+                      <p className="text-small-upper text-neutral-500">{pageData?.contactInformation?.extraInfo?.subtitle || "Certified Professional"}</p>
                     </div>
                   </div>
                   
                   {/* Social Icons */}
                   <SocialLinks 
                     socialLinks={socialLinks}
+                    titleClassName="text-base-bold text-neutral-950"
                     linkClassName="w-12 h-12 bg-warning-500 text-white hover:bg-warning-600 rounded-full flex items-center justify-center transition-colors"
                   />
                 </div>
