@@ -9,6 +9,7 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   ariaLabel?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export default function Button({
@@ -20,6 +21,7 @@ export default function Button({
   type = 'button',
   ariaLabel,
   className = '',
+  disabled = false,
 }: ButtonProps) {
   const baseClasses = "inline-flex items-center justify-center gap-2 px-6 py-3 relative flex-[0_0_auto] transition-all cursor-pointer rounded";
   
@@ -84,6 +86,7 @@ export default function Button({
         className={`${variantClasses[variant]} ${className}`}
         onClick={onClick}
         aria-label={ariaLabel}
+        disabled={disabled}
       >
         <span className="inline-flex items-center">
           {label}
@@ -103,6 +106,7 @@ export default function Button({
       className={`${baseClasses} ${variantClasses[variant]} ${className}`}
       onClick={onClick}
       aria-label={ariaLabel}
+      disabled={disabled}
     >
       {icon && (
         <div className="relative w-4 h-[19px]" aria-hidden="true">

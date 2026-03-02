@@ -8,6 +8,7 @@ import ServiceCard from './ServiceCard';
 import FeaturedProjectCard from './FeaturedProjectCard';
 import TestimonialCard from './TestimonialCard';
 import CtaBox from './CtaBox';
+import EstimateForm from './EstimateForm';
 import { fetchWordPressGraphQL } from '../lib/wordpress-graphql';
 import { GET_LANDING_PAGE, LandingPageData, GET_OWNERS, OwnersData } from '../lib/wordpress-queries';
 import { GET_ALL_SERVICES, GET_ALL_PROJECTS } from '../lib/wordpress-queries';
@@ -134,45 +135,7 @@ function stripHtml(html: string): string {
               <h3 className="text-display-3 text-neutral-950 mb-2">Get a Free Estimate</h3>
               <p className="text-neutral-700/60 text-small mb-8">Professional service within 24 hours.</p>
               
-              <form className="space-y-5" method="POST" action="/api/estimate">
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label="Name"
-                    name="name"
-                    placeholder="Your Name"
-                    type="text"
-                    required
-                  />
-                  <Input
-                    label="Phone"
-                    name="phone"
-                    placeholder="(555) 000-0000"
-                    type="tel"
-                    required
-                  />
-                </div>
-                
-                <Input
-                  label="Email"
-                  name="email"
-                  placeholder="your.email@example.com"
-                  type="email"
-                  required
-                />
-                
-                <Textarea
-                  label="Message"
-                  name="message"
-                  placeholder="How can we help?"
-                  rows={3}
-                />
-                
-                <Button
-                  label="Request Immediate Estimate"
-                  type="submit"
-                  className="w-full"
-                />
-              </form>
+              <EstimateForm />
             </div>
           </div>
         </div>

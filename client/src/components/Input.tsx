@@ -4,8 +4,10 @@ interface InputProps {
   placeholder?: string;
   type?: 'text' | 'tel' | 'email';
   defaultValue?: string;
+  value?: string;
   className?: string;
   required?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function Input({
@@ -14,8 +16,10 @@ export default function Input({
   placeholder = '',
   type = 'text',
   defaultValue = '',
+  value,
   className = '',
   required = false,
+  onChange,
 }: InputProps) {
   return (
     <div className="space-y-1">
@@ -28,8 +32,10 @@ export default function Input({
         name={name}
         type={type}
         defaultValue={defaultValue}
+        value={value}
         placeholder={placeholder}
         required={required}
+        onChange={onChange}
         className={`w-full bg-primary-50 border-transparent focus:border-primary-500 focus:ring-0 text-neutral-950 text-sm p-4 ${className}`}
       />
     </div>
