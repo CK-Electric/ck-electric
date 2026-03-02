@@ -12,19 +12,20 @@ interface ProjectNode {
   featuredImage: {
     node: {
       id: string;
-      sourceUrl?: string;
+      mediaItemUrl: string;
       altText?: string;
     };
   };
   projectFields: {
-    fieldGroupName: string;
+    shortDescription: string;
+    tags: {
+      nodes: {
+        name: string;
+      }[];
+    };
     specifications: {
       coverageArea: string;
-      fieldGroupName: string;
-      responseTime: string;
-      warranty: string;
     };
-    mainContentSection: string;
   };
 }
 
@@ -171,17 +172,30 @@ export default async function ProjectsPage() {
         <section className="py-20 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {projects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                image={project.featuredImage?.node?.sourceUrl || 'https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=400&h=300&fit=crop'}
-                location={project.projectFields?.specifications?.coverageArea || 'Puget Sound'}
-                projectName={project.title}
-                category="Commercial"
-                description="Professional electrical project completed with precision and quality workmanship."
-                link={`/projects/${project.slug}`}
-              />
-            ))}
+            {projects
+              .map((project) => {
+                const tags = project.projectFields?.tags?.nodes || [];
+                const isFeatured = tags.some(tag => tag.name.toLowerCase() === 'featured');
+                
+                return {
+                  ...project,
+                  isFeatured,
+                  displayTags: tags.length > 0 ? tags : [{ name: 'Commercial' }]
+                };
+              })
+              .sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0)) // Featured projects first
+              .map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  image={project.featuredImage?.node?.mediaItemUrl || 'https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=400&h=300&fit=crop'}
+                  location={project.projectFields?.specifications?.coverageArea || 'Puget Sound'}
+                  projectName={project.title}
+                  category={project.displayTags}
+                  description={project.projectFields?.shortDescription || 'Professional electrical project completed with precision and quality workmanship.'}
+                  link={`/projects/${project.slug}`}
+                  isFeatured={project.isFeatured}
+                />
+              ))}
           </div>
         </div>
       </section>

@@ -260,7 +260,7 @@ export const GET_LANDING_PAGE = `
 `;
 
 export const GET_ALL_PROJECTS = `
-  query NewQuery {
+  query MyQuery3 {
     projects {
       nodes {
         id
@@ -268,19 +268,20 @@ export const GET_ALL_PROJECTS = `
         slug
         featuredImage {
           node {
-            sourceUrl
+            id
+            mediaItemUrl
+            altText
           }
         }
         projectFields {
+          shortDescription
+          tags {
+            nodes {
+              name
+            }
+          }
           specifications {
             coverageArea
-            projectType
-            clientType
-            completionDate
-            projectValue
-            technologies
-            challenges
-            solutions
           }
         }
       }
@@ -465,7 +466,6 @@ export const GET_ALL_SERVICES = `
 export const GET_SERVICE_BY_SLUG = `
   query GetServiceBySlug($slug: ID!) {
     service(id: $slug, idType: SLUG) {
-      content
       title
       slug
       seo {
@@ -485,7 +485,6 @@ export const GET_SERVICE_BY_SLUG = `
         specifications {
           coverageArea
           responseTime
-          type
           warranty
         }
         heroSection {
@@ -500,6 +499,7 @@ export const GET_SERVICE_BY_SLUG = `
           }
           phoneNumber
         }
+        mainContentSection
       }
       featuredImage {
         node {

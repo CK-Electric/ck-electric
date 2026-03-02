@@ -10,8 +10,8 @@ import TestimonialCard from './TestimonialCard';
 import CtaBox from './CtaBox';
 import { fetchWordPressGraphQL } from '../lib/wordpress-graphql';
 import { GET_LANDING_PAGE, LandingPageData, GET_OWNERS, OwnersData } from '../lib/wordpress-queries';
-import { GET_ALL_SERVICES } from '../lib/wordpress-queries';
-import { ServicesResponse } from '../lib/wordpress-types';
+import { GET_ALL_SERVICES, GET_ALL_PROJECTS } from '../lib/wordpress-queries';
+import { ServicesResponse, ProjectsResponse } from '../lib/wordpress-types';
 
 export default async function HomePage() {
   // Helper function to strip HTML tags
@@ -47,6 +47,16 @@ function stripHtml(html: string): string {
     servicesData = response.data as ServicesResponse;
   } catch (error) {
     console.error('Error fetching services data:', error);
+  }
+
+  // Fetch projects data from WordPress
+  let projectsData: ProjectsResponse | null = null;
+  
+  try {
+    const response = await fetchWordPressGraphQL(GET_ALL_PROJECTS);
+    projectsData = response.data as ProjectsResponse;
+  } catch (error) {
+    console.error('Error fetching projects data:', error);
   }
 
   // Use WordPress data if available, otherwise use fallbacks
@@ -423,27 +433,52 @@ function stripHtml(html: string): string {
           </div>
           
           <div className="grid md:grid-cols-3 gap-0">
-            <FeaturedProjectCard
-              title="Gensco Kirkland"
-              location="Kirkland, WA"
-              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuDMPhChpecZb34tbGDC_MtSdQdv7FiRj4-Mcy5_YPcUql2ypcjlHq90UNrzx3kyQ8BUmvbQeo5KIQqT7udbCYUg3g4F1nFdgoCDrwOgpkuyTZUTv8nu5NHEcpII5IMzh39AVSoqoj83Zlgzx-Egi0zLZIO28wYPe6XWXmGa0pbyyqEx2dbHIr--yJkiJ4aRQapx3Hjkcu524qcTkpWt7u4xuEKecz8cvj_1bCAWvpv0Zg9s_IeTWDaNFNyMmNSb2JsoPIhIIQjGKVM"
-              position="top"
-            />
-            
-            <FeaturedProjectCard
-              title="Gensco Everett"
-              location="Everett, WA"
-              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuAY5Ivnp3HE7wzwBozpfZIERQdtojYsnWyPrawkT9Ouko2tLOS5-zprr_BXQ1S6jlHAD0QA5gyXwHHtDDCG1zGX70BcVic1SXzapft9SQW1OvSBT-fuvlG0bYPwAjQyyzzMseMLXb_WgBIlg8j0G9QmsisWu6Q3DxESoMtTZ7w3kQir4UN50XUywDuoy81EZ4wBNFxnk02PH0Q2Sox67oc-NNHeT_skMrQ5VypSEcfBKjYxZKheOpW_PHe0DMBLU3hdOxhbtdxjldg"
-              position="center"
-              hasBackground
-            />
-            
-            <FeaturedProjectCard
-              title="Park 120"
-              location="Regional WA"
-              imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuB53L9qUBIZfx03xe17JAgCVkqjb8llm-Fwb5K_YB291P5kAD3Sa4RCx1ZQ_lGoZlX76pkTzTyi835SIN622OzekfGmjnfddjo_wRi3k4_tTyqt-mCBwvJWr3N5tBoPpXv8p4q3oZ-975-734XLmktT4VIxDCDjfNntXr4K-7QL5Bq1ISNn-dE_ns_rXqZ0xd1o7ikpXid4vYqyTBhFMmyXRZbYPR_oBOMuEXB4xZ_dyi0gmXbj0exwrVb7TtFskiwLsbKN78313ic"
-              position="bottom"
-            />
+            {projectsData?.projects?.nodes
+              .filter(project => 
+                project.projectFields?.tags?.nodes?.some(tag => 
+                  tag.name.toLowerCase() === 'featured'
+                )
+              )
+              .slice(0, 3)
+              .map((project, index) => {
+                const positions = ['top', 'center', 'bottom'] as const;
+                return (
+                  <FeaturedProjectCard
+                    key={project.id}
+                    title={project.title}
+                    location={`${project.projectFields?.specifications?.coverageArea || 'Puget Sound'}, WA`}
+                    imageUrl={project.featuredImage?.node?.mediaItemUrl || 'https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=400&h=300&fit=crop'}
+                    position={positions[index]}
+                    hasBackground={index === 1}
+                    slug={project.slug}
+                  />
+                );
+              }) || (
+              // Fallback to hardcoded projects if no featured projects found
+              <>
+                <FeaturedProjectCard
+                  title="Gensco Kirkland"
+                  location="Kirkland, WA"
+                  imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuDMPhChpecZb34tbGDC_MtSdQdv7FiRj4-Mcy5_YPcUql2ypcjlHq90UNrzx3kyQ8BUmvbQeo5KIQqT7udbCYUg3g4F1nFdgoCDrwOgpkuyTZUTv8nu5NHEcpII5IMzh39AVSoqoj83Zlgzx-Egi0zLZIO28wYPe6XWXmGa0pbyyqEx2dbHIr--yJkiJ4aRQapx3Hjkcu524qcTkpWt7u4xuEKecz8cvj_1bCAWvpv0Zg9s_IeTWDaNFNyMmNSb2JsoPIhIIQjGKVM"
+                  position="top"
+                />
+                
+                <FeaturedProjectCard
+                  title="Gensco Everett"
+                  location="Everett, WA"
+                  imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuAY5Ivnp3HE7wzwBozpfZIERQdtojYsnWyPrawkT9Ouko2tLOS5-zprr_BXQ1S6jlHAD0QA5gyXwHHtDDCG1zGX70BcVic1SXzapft9SQW1OvSBT-fuvlG0bYPwAjQyyzzMseMLXb_WgBIlg8j0G9QmsisWu6Q3DxESoMtTZ7w3kQir4UN50XUywDuoy81EZ4wBNFxnk02PH0Q2Sox67oc-NNHeT_skMrQ5VypSEcfBKjYxZKheOpW_PHe0DMBLU3hdOxhbtdxjldg"
+                  position="center"
+                  hasBackground
+                />
+                
+                <FeaturedProjectCard
+                  title="Park 120"
+                  location="Regional WA"
+                  imageUrl="https://lh3.googleusercontent.com/aida-public/AB6AXuB53L9qUBIZfx03xe17JAgCVkqjb8llm-Fwb5K_YB291P5kAD3Sa4RCx1ZQ_lGoZlX76pkTzTyi835SIN622OzekfGmjnfddjo_wRi3k4_tTyqt-mCBwvJWr3N5tBoPpXv8p4q3oZ-975-734XLmktT4VIxDCDjfNntXr4K-7QL5Bq1ISNn-dE_ns_rXqZ0xd1o7ikpXid4vYqyTBhFMmyXRZbYPR_oBOMuEXB4xZ_dyi0gmXbj0exwrVb7TtFskiwLsbKN78313ic"
+                  position="bottom"
+                />
+              </>
+            )}
           </div>
           
           <div className="text-center mt-16">

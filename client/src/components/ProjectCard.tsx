@@ -6,9 +6,10 @@ interface ProjectCardProps {
   image: string;
   location: string;
   projectName: string;
-  category: string;
+  category: { name: string }[] | string[];
   description: string;
   link: string;
+  isFeatured?: boolean;
 }
 
 export default function ProjectCard({
@@ -17,7 +18,8 @@ export default function ProjectCard({
   projectName,
   category,
   description,
-  link
+  link,
+  isFeatured = false
 }: ProjectCardProps) {
   return (
     <article className="flex flex-col h-full bg-white transition-all group cursor-pointer hover:shadow-lg">
@@ -28,9 +30,26 @@ export default function ProjectCard({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
             src={image}
           />
-          <span className="absolute top-4 left-4 bg-neutral-950 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded">
-            {category}
-          </span>
+          <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+            {isFeatured && (
+              <span className="bg-yellow-400 text-neutral-950 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded">
+                Featured
+              </span>
+            )}
+            {Array.isArray(category) && category
+              .filter(tag => {
+                const tagName = typeof tag === 'string' ? tag : tag.name;
+                return tagName.toLowerCase() !== 'featured';
+              })
+              .map((tag, index) => (
+              <span 
+                key={index}
+                className="bg-neutral-950 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded"
+              >
+                {typeof tag === 'string' ? tag : tag.name}
+              </span>
+            ))}
+          </div>
         </div>
         
         <div className="p-2">

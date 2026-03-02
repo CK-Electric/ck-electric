@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from './Button';
 import RelatedArticles from './RelatedArticles';
+import CtaBox from './CtaBox';
 
 interface Specification {
   label: string;
@@ -35,6 +36,14 @@ interface DetailViewProps {
   ctaText?: string;
   ctaHref?: string;
 
+  // CtaBox Props
+  showCtaBox?: boolean;
+  ctaBoxTitle?: string;
+  ctaBoxPrimaryButtonText?: string;
+  ctaBoxPrimaryButtonHref?: string;
+  ctaBoxSecondaryButtonText?: string;
+  ctaBoxSecondaryButtonHref?: string;
+
   // Related Section Props
   relatedTitle?: string;
   relatedItems?: RelatedItem[];
@@ -53,6 +62,12 @@ export default function DetailView({
   specifications,
   ctaText = "REQUEST ESTIMATE",
   ctaHref = "#",
+  showCtaBox = false,
+  ctaBoxTitle = "Ready to get started?",
+  ctaBoxPrimaryButtonText = "Get a Free Estimate",
+  ctaBoxPrimaryButtonHref = "/request-estimate",
+  ctaBoxSecondaryButtonText = "Call Us Now",
+  ctaBoxSecondaryButtonHref = "/contact",
   relatedTitle = "Related",
   relatedItems = [],
   relatedSectionType = 'services'
@@ -121,6 +136,15 @@ export default function DetailView({
             <div className="space-y-4 text-neutral-600 text-base leading-relaxed">
               {content}
             </div>
+            {showCtaBox && (
+              <CtaBox
+                title={ctaBoxTitle}
+                primaryButtonText={ctaBoxPrimaryButtonText}
+                primaryButtonHref={ctaBoxPrimaryButtonHref}
+                secondaryButtonText={ctaBoxSecondaryButtonText}
+                secondaryButtonHref={ctaBoxSecondaryButtonHref}
+              />
+            )}
           </div>
           
           <aside className="lg:col-span-1">

@@ -51,8 +51,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
     // Extract specifications
     const specifications = [
       {
-        label: 'Type',
-        value: service.servicesFields.specifications.type?.join(', ') || 'Electrical Contracting'
+        label: 'Tags',
+        value: service.servicesFields.heroSection.tags?.nodes?.map(tag => tag.name).join(', ') || 'Electrical Services'
       },
       {
         label: 'Response Time',
@@ -71,13 +71,19 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
     return (
       <DetailView
         title={service.title}
-        subtitle={stripHtml(service.content)}
+        subtitle={stripHtml(service.servicesFields.smallDescription)}
         contentTitle="Service Details"
-        content={null}
+        content={stripHtml(service.servicesFields.mainContentSection)}
         specifications={specifications}
         primaryButtonText={service.servicesFields.heroSection.primaryCatText || "Get a Free Estimate"}
         primaryButtonHref={service.servicesFields.heroSection.primaryCtaLink || "/request-estimate"}
         backgroundImage={service.featuredImage?.node?.sourceUrl || "https://images.unsplash.com/photo-1621905492509-7d1729c5be18?w=1920&h=1080&fit=crop"}
+        showCtaBox={true}
+        ctaBoxTitle="Ready to get started?"
+        ctaBoxPrimaryButtonText={service.servicesFields.heroSection.primaryCatText || "Get a Free Estimate"}
+        ctaBoxPrimaryButtonHref={service.servicesFields.heroSection.primaryCtaLink || "/request-estimate"}
+        ctaBoxSecondaryButtonText={service.servicesFields.heroSection.secondaryCtaText || "Call Us Now"}
+        ctaBoxSecondaryButtonHref={service.servicesFields.heroSection.secondaryCtaLink || "/contact"}
       />
     );
   } catch (error) {

@@ -281,6 +281,7 @@ export interface ServiceFields {
   heroSection: ServiceHeroSection;
   smallDescription: string;
   specifications: ServiceSpecifications;
+  mainContentSection?: string;
 }
 
 export interface ServiceNode {
@@ -339,27 +340,32 @@ export interface ServiceDetailResponse {
 }
 
 // Projects interfaces
+export interface ProjectTag {
+  name: string;
+}
+
+export interface ProjectFields {
+  shortDescription: string;
+  tags: {
+    nodes: ProjectTag[];
+  };
+  specifications: {
+    coverageArea: string;
+  };
+}
+
 export interface ProjectNode {
   id: string;
   title: string;
   slug: string;
   featuredImage: {
     node: {
-      sourceUrl: string;
+      id: string;
+      mediaItemUrl: string;
+      altText?: string;
     };
   };
-  projectFields: {
-    specifications: {
-      coverageArea: string;
-      projectType: string;
-      clientType: string;
-      completionDate: string;
-      projectValue: string;
-      technologies: string;
-      challenges: string;
-      solutions: string;
-    };
-  };
+  projectFields: ProjectFields;
 }
 
 export interface ProjectsResponse {
