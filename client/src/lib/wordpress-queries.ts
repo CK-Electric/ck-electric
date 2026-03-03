@@ -694,11 +694,33 @@ export const GET_SERVICE_AREA = `
   }
 `;
 
+export const GET_TESTIMONIALS = `
+  query testimonials {
+    testimonials {
+      nodes {
+        testimonialContent {
+          firstName
+          lastName
+          location
+          clientProfileImage {
+            node {
+              altText
+              mediaItemUrl
+            }
+          }
+        }
+        title
+      }
+    }
+  }
+`;
+
 // Re-export types from wordpress-types for convenience
 export type { 
   BlogPageData, 
   ProjectsPageData,
   ServicesPageData,
   LandingPageData,
-  OwnersData 
+  OwnersData,
+  TestimonialsData
 } from './wordpress-types';

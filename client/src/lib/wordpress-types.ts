@@ -373,3 +373,29 @@ export interface ProjectsResponse {
     nodes: ProjectNode[];
   };
 }
+
+// Testimonials interfaces
+export interface ClientProfileImage {
+  node: {
+    altText: string;
+    mediaItemUrl: string;
+  };
+}
+
+export interface TestimonialContent {
+  firstName: string;
+  lastName: string;
+  location: string;
+  clientProfileImage: ClientProfileImage;
+}
+
+export interface TestimonialNode {
+  testimonialContent: TestimonialContent;
+  title: string;
+}
+
+export interface TestimonialsData {
+  testimonials: {
+    nodes: TestimonialNode[];
+  };
+}

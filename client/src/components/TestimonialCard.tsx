@@ -1,7 +1,7 @@
 interface TestimonialCardProps {
   quote: string;
   clientName: string;
-  clientTitle: string;
+  clientTitle?: string;
   clientLocation: string;
   initials: string;
   borderColor?: 'primary' | 'neutral';
@@ -29,7 +29,9 @@ export default function TestimonialCard({
         </div>
         <div>
           <p className="text-neutral-950 font-black uppercase text-xs tracking-widest">{clientName}</p>
-          <p className="text-primary-500 text-[10px] font-bold uppercase">{clientTitle}, {clientLocation}</p>
+          <p className="text-primary-500 text-[10px] font-bold uppercase">
+            {clientTitle && `${clientTitle}, `}{clientLocation}
+          </p>
         </div>
       </div>
     </div>

@@ -10,7 +10,7 @@ import TestimonialCard from './TestimonialCard';
 import CtaBox from './CtaBox';
 import EstimateForm from './EstimateForm';
 import { fetchWordPressGraphQL } from '../lib/wordpress-graphql';
-import { GET_LANDING_PAGE, LandingPageData, GET_OWNERS, OwnersData, GET_SERVICE_AREAS } from '../lib/wordpress-queries';
+import { GET_LANDING_PAGE, LandingPageData, GET_OWNERS, OwnersData, GET_SERVICE_AREAS, GET_TESTIMONIALS, TestimonialsData } from '../lib/wordpress-queries';
 import { GET_ALL_SERVICES, GET_ALL_PROJECTS } from '../lib/wordpress-queries';
 import { ServicesResponse, ProjectsResponse } from '../lib/wordpress-types';
 
@@ -69,6 +69,16 @@ function stripHtml(html: string): string {
     console.log('Service areas data:', serviceAreasData);
   } catch (error) {
     console.error('Error fetching service areas data:', error);
+  }
+
+  // Fetch testimonials data from WordPress
+  let testimonialsData: TestimonialsData | null = null;
+  
+  try {
+    const response = await fetchWordPressGraphQL(GET_TESTIMONIALS);
+    testimonialsData = response.data as TestimonialsData;
+  } catch (error) {
+    console.error('Error fetching testimonials data:', error);
   }
 
   const serviceAreas = serviceAreasData?.serviceAreas?.nodes || [];
@@ -541,23 +551,25 @@ function stripHtml(html: string): string {
           </div>
           
           <div className="grid md:grid-cols-2 gap-12">
-            <TestimonialCard
-              quote="CK Electric was phenomenal. I didn't have to deal with a dispatcher; I spoke with Matt immediately and he was at our facility the next day. The quality of work on our EV chargers was top-tier."
-              clientName="James D."
-              clientTitle="Business Owner"
-              clientLocation="Tacoma"
-              initials="JD"
-              borderColor="primary"
-            />
-            
-            <TestimonialCard
-              quote="When you're doing a total home rewire, you want someone you can trust. Rob walked us through every step and caught things other contractors missed. Efficiency and Quality isn't just a slogan."
-              clientName="Sarah A."
-              clientTitle="Homeowner"
-              clientLocation="Everett"
-              initials="SA"
-              borderColor="neutral"
-            />
+            {testimonialsData?.testimonials?.nodes?.slice(0, 2).map((testimonial, index) => {
+              const firstName = testimonial.testimonialContent.firstName;
+              const lastName = testimonial.testimonialContent.lastName;
+              const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`;
+              const clientName = `${firstName} ${lastName}`;
+              const clientLocation = testimonial.testimonialContent.location;
+              const borderColor = index === 0 ? "primary" : "neutral";
+              
+              return (
+                <TestimonialCard
+                  key={testimonial.title}
+                  quote={testimonial.title}
+                  clientName={clientName}
+                  clientLocation={clientLocation}
+                  initials={initials}
+                  borderColor={borderColor}
+                />
+              );
+            })}
           </div>
         </div>
       </section>
