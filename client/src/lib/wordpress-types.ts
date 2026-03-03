@@ -399,3 +399,42 @@ export interface TestimonialsData {
     nodes: TestimonialNode[];
   };
 }
+
+// Blogs interfaces
+export interface BlogCategory {
+  name: string;
+}
+
+export interface BlogFeaturedImage {
+  node: {
+    mediaItemUrl: string;
+    seo: {
+      metaDesc: string;
+    };
+  };
+}
+
+export interface BlogEntry {
+  shortDescription: string;
+  featuredImage: BlogFeaturedImage;
+  categories: {
+    nodes: BlogCategory[];
+  };
+}
+
+export interface BlogSeo {
+  readingTime: number;
+  title: string;
+}
+
+export interface BlogNode {
+  seo: BlogSeo;
+  blogEntry: BlogEntry;
+  date: string;
+}
+
+export interface BlogsData {
+  blogs: {
+    nodes: BlogNode[];
+  };
+}

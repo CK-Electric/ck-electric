@@ -715,6 +715,36 @@ export const GET_TESTIMONIALS = `
   }
 `;
 
+export const GET_BLOGS = `
+  query blogs {
+    blogs {
+      nodes {
+        seo {
+          readingTime
+          title
+        }
+        blogEntry {
+          shortDescription
+          featuredImage {
+            node {
+              mediaItemUrl
+              seo {
+                metaDesc
+              }
+            }
+          }
+          categories {
+            nodes {
+              name
+            }
+          }
+        }
+        date
+      }
+    }
+  }
+`;
+
 // Re-export types from wordpress-types for convenience
 export type { 
   BlogPageData, 
@@ -722,5 +752,6 @@ export type {
   ServicesPageData,
   LandingPageData,
   OwnersData,
-  TestimonialsData
+  TestimonialsData,
+  BlogsData
 } from './wordpress-types';
