@@ -70,6 +70,7 @@ export interface LandingPage {
   heroFooter: HeroFooter;
   aboutUs: AboutUs;
   tag: string;
+  formImage: FeaturedImage;
 }
 
 export interface FeaturedImageNode {
@@ -385,7 +386,7 @@ export interface ClientProfileImage {
 export interface TestimonialContent {
   firstName: string;
   lastName: string;
-  location: string;
+  url: string;
   clientProfileImage: ClientProfileImage;
 }
 
@@ -507,14 +508,27 @@ export interface RequestEstimatePageData {
       metaRobotsNoindex?: string;
     };
     requestEstimate?: RequestEstimateData;
+    formImage?: {
+      node?: {
+        mediaItemUrl?: string;
+      };
+    };
   };
 }
 
 export interface BlogEntryDetail {
-  featuredImage: {
-    node: {
-      mediaItemUrl: string;
+  featuredImage?: {
+    node?: {
+      mediaItemUrl?: string;
     };
+  };
+  formImage?: {
+    node?: {
+      mediaItemUrl?: string;
+    };
+  };
+  ctaButtonsHero?: {
+    FirstName: string;
   };
   authorFirstName: string;
   authorLastName: string;

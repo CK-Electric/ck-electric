@@ -106,12 +106,7 @@ export default async function ServiceAreaPage({ params }: ServiceAreaPageProps) 
 
         // Content Section Props
         contentTitle={`${serviceArea.servicesArea?.location} Electrical Services`}
-        content={
-          <div 
-            className="prose prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: serviceArea.servicesArea?.content || '<p>Professional electrical services for this area.</p>' }}
-          />
-        }
+        content={serviceArea.servicesArea?.content || '<p>Professional electrical services for this area.</p>'}
 
         // Sidebar Props
         specifications={specifications}

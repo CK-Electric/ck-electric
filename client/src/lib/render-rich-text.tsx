@@ -5,10 +5,49 @@ interface RenderRichTextProps {
   className?: string;
 }
 
+// Unified styling configuration for both SSR and CSR
+const HTML_ELEMENT_STYLES = {
+  h1: 'text-display-1 font-bold text-neutral-950 mt-12 mb-6',
+  h2: 'text-display-3 font-bold text-neutral-950 mt-12 mb-6',
+  h3: 'text-xl font-bold text-neutral-950 mb-2',
+  h4: 'text-lg font-bold text-neutral-950 mb-2',
+  h5: 'text-base font-bold text-neutral-950 mb-2',
+  h6: 'text-sm font-bold text-neutral-950 mb-2',
+  p: 'text-base text-neutral-700 mb-6',
+  ul: 'list-disc list-inside mb-4 space-y-2',
+  ol: 'list-decimal list-inside mb-4 space-y-2',
+  li: 'text-neutral-600',
+  blockquote: 'border-l-4 border-primary-500 pl-4 py-2 my-4 bg-neutral-50 italic text-neutral-700',
+  a: 'text-primary-500 hover:text-primary-600 underline',
+  strong: 'font-bold',
+  b: 'font-bold',
+  em: 'italic',
+  i: 'italic',
+  code: 'bg-neutral-100 px-1 py-0.5 rounded text-sm font-mono',
+  pre: 'bg-neutral-100 p-4 rounded-lg overflow-x-auto mb-4',
+  hr: 'border-neutral-200 my-8'
+} as const;
+
 export function renderRichText(content: string, className?: string): React.ReactNode {
   if (!content) return null;
 
-  // Parse the HTML content and convert to React components
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    // Server-side rendering - use dangerouslySetInnerHTML with pre-processed classes
+    let processedContent = content;
+    
+    // Apply unified styling to each tag type
+    Object.entries(HTML_ELEMENT_STYLES).forEach(([tag, classes]) => {
+      const regex = new RegExp(`<${tag}([^>]*)>`, 'g');
+      processedContent = processedContent.replace(regex, `<${tag}$1 class="${classes}">`);
+    });
+    
+    return (
+      <div className={className} dangerouslySetInnerHTML={{ __html: processedContent }} />
+    );
+  }
+
+  // Client-side rendering - Parse the HTML content and convert to React components
   const parser = new DOMParser();
   const doc = parser.parseFromString(content, 'text/html');
   
@@ -29,116 +68,37 @@ export function renderRichText(content: string, className?: string): React.React
     // Process child nodes
     const children = Array.from(element.childNodes).map(child => processNode(child, depth + 1));
     
-    // Handle different HTML elements
+    // Handle different HTML elements using unified styling
+    const styles = HTML_ELEMENT_STYLES[tagName as keyof typeof HTML_ELEMENT_STYLES];
+    
+    if (styles) {
+      return React.createElement(
+        tagName,
+        { key: Math.random(), className: styles },
+        ...children
+      );
+    }
+    
+    // Handle elements that need special processing
     switch (tagName) {
-      case 'p':
+      case 'img':
+        const imgElement = element as HTMLImageElement;
         return (
-          <p key={Math.random()} className="text-base text-neutral-700 mb-6">
-            {children}
-          </p>
-        );
-      
-      case 'h1':
-        return (
-          <h1 key={Math.random()} className="text-display-1 font-bold text-neutral-950 mt-12 mb-6">
-            {children}
-          </h1>
-        );
-      
-      case 'h2':
-        return (
-          <h2 key={Math.random()} className="text-display-3 font-bold text-neutral-950 mt-12 mb-6">
-            {children}
-          </h2>
-        );
-      
-      case 'h3':
-        return (
-          <h3 key={Math.random()} className="text-display-4 font-bold text-neutral-950 mt-8 mb-4">
-            {children}
-          </h3>
-        );
-      
-      case 'h4':
-        return (
-          <h4 key={Math.random()} className="text-display-5 font-bold text-neutral-950 mt-6 mb-4">
-            {children}
-          </h4>
-        );
-      
-      case 'ul':
-        return (
-          <ul key={Math.random()} className="list-disc list-inside text-base text-neutral-700 mb-6 space-y-2">
-            {children}
-          </ul>
-        );
-      
-      case 'ol':
-        return (
-          <ol key={Math.random()} className="list-decimal list-inside text-base text-neutral-700 mb-6 space-y-2">
-            {children}
-          </ol>
-        );
-      
-      case 'li':
-        return (
-          <li key={Math.random()} className="mb-2">
-            {children}
-          </li>
-        );
-      
-      case 'blockquote':
-        // Check if it's a WordPress blockquote
-        if (element.classList.contains('wp-block-quote')) {
-          return (
-            <blockquote key={Math.random()} className="my-12 py-10 px-8 bg-primary-50 border-t-2 border-b-2 border-primary-500 text-center">
-              <p className="text-display-4 font-bold text-neutral-950 mb-4 italic">
-                {children}
-              </p>
-            </blockquote>
-          );
-        }
-        // Default blockquote styling
-        return (
-          <blockquote key={Math.random()} className="border-l-4 border-primary-500 pl-6 my-6 italic text-neutral-700">
-            {children}
-          </blockquote>
-        );
-      
-      case 'strong':
-        return (
-          <strong key={Math.random()} className="font-bold">
-            {children}
-          </strong>
-        );
-      
-      case 'em':
-        return (
-          <em key={Math.random()} className="italic">
-            {children}
-          </em>
-        );
-      
-      case 'a':
-        const href = element.getAttribute('href') || undefined;
-        return (
-          <a 
+          <img 
             key={Math.random()} 
-            href={href} 
-            className="text-primary-500 hover:text-primary-600 underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {children}
-          </a>
+            src={imgElement.src} 
+            alt={imgElement.alt || ''} 
+            className="w-full h-auto rounded-lg my-4" 
+          />
         );
       
       case 'br':
         return <br key={Math.random()} />;
       
       default:
+        // For any other elements, render them as-is with basic styling
         return (
-          <div key={Math.random()} className={className}>
+          <div key={Math.random()} className="mb-4">
             {children}
           </div>
         );

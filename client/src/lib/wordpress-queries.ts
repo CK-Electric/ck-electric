@@ -207,6 +207,12 @@ export const GET_LANDING_PAGE = `
           serviceArea
           slogan
         }
+        formImage {
+          node {
+            mediaItemUrl
+            altText
+          }
+        }
         heroItems {
           feature1 {
             title1
@@ -701,7 +707,7 @@ export const GET_TESTIMONIALS = `
         testimonialContent {
           firstName
           lastName
-          location
+          url
           clientProfileImage {
             node {
               altText
@@ -861,6 +867,7 @@ export type {
   LandingPageData,
   OwnersData,
   TestimonialsData,
+  ClientsData,
   BlogsData,
   BlogDetailData
 } from './wordpress-types';

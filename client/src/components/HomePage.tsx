@@ -1,82 +1,81 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { Bolt, Verified, Timer, Phone, Mail, LocationOn, Check, ArrowRightAlt, FormatQuote, CorporateFare, ElectricBolt, GridView, Light, ChargingStation, Construction, Call } from '@mui/icons-material';
 import Button from './Button';
 import Input from './Input';
 import Select from './Select';
-import Textarea from './Textarea';
+import Pagination from './Pagination';
 import ServiceCard from './ServiceCard';
 import FeaturedProjectCard from './FeaturedProjectCard';
 import TestimonialCard from './TestimonialCard';
 import CtaBox from './CtaBox';
 import EstimateForm from './EstimateForm';
-import ClientLogo from '@/components/ClientLogo';
+import ClientLogo from './ClientLogo';
 import { fetchWordPressGraphQL } from '../lib/wordpress-graphql';
 import { GET_LANDING_PAGE, LandingPageData, GET_OWNERS, OwnersData, GET_SERVICE_AREAS, GET_TESTIMONIALS, TestimonialsData, GET_CLIENTS, ClientsData } from '../lib/wordpress-queries';
 import { GET_ALL_SERVICES, GET_ALL_PROJECTS } from '../lib/wordpress-queries';
 import { ServicesResponse, ProjectsResponse } from '../lib/wordpress-types';
 
-export default async function HomePage() {
+export default function HomePage() {
+  const [testimonialsPage, setTestimonialsPage] = useState(1);
+  const testimonialsPerPage = 2;
+  const [allTestimonialsExpanded, setAllTestimonialsExpanded] = useState(false);
+  
+  const [landingPageData, setLandingPageData] = useState<LandingPageData | null>(null);
+  const [ownersData, setOwnersData] = useState<OwnersData | null>(null);
+  const [serviceAreasData, setServiceAreasData] = useState<any>(null);
+  const [testimonialsData, setTestimonialsData] = useState<TestimonialsData | null>(null);
+  const [clientsData, setClientsData] = useState<any>(null);
+  const [servicesData, setServicesData] = useState<ServicesResponse | null>(null);
+  const [projectsData, setProjectsData] = useState<ProjectsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
   // Helper function to strip HTML tags
   function stripHtml(html: string): string {
     return html.replace(/<[^>]*>/g, '').trim();
   }
 
-  // Fetch landing page data from WordPress
-  let landingPageData: LandingPageData | null = null;
-  let ownersData: OwnersData | null = null;
-  let serviceAreasData: any = null;
-  let testimonialsData: TestimonialsData | null = null;
-  let clientsData: ClientsData | null = null;
-  let servicesData: ServicesResponse | null = null;
-  let projectsData: ProjectsResponse | null = null;
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch all data in parallel
+        const [
+          landingPageResponse,
+          ownersResponse,
+          serviceAreasResponse,
+          testimonialsResponse,
+          clientsResponse,
+          servicesResponse,
+          projectsResponse
+        ] = await Promise.all([
+          fetchWordPressGraphQL<LandingPageData>(GET_LANDING_PAGE),
+          fetchWordPressGraphQL<OwnersData>(GET_OWNERS),
+          fetchWordPressGraphQL<any>(GET_SERVICE_AREAS),
+          fetchWordPressGraphQL<TestimonialsData>(GET_TESTIMONIALS),
+          fetchWordPressGraphQL<ClientsData>(GET_CLIENTS),
+          fetchWordPressGraphQL<ServicesResponse>(GET_ALL_SERVICES),
+          fetchWordPressGraphQL<ProjectsResponse>(GET_ALL_PROJECTS)
+        ]);
 
-  try {
-    // Fetch all data in parallel
-    const [
-      landingPageResponse,
-      ownersResponse,
-      serviceAreasResponse,
-      testimonialsResponse,
-      clientsResponse,
-      servicesResponse,
-      projectsResponse
-    ] = await Promise.all([
-      fetchWordPressGraphQL<LandingPageData>(GET_LANDING_PAGE),
-      fetchWordPressGraphQL<OwnersData>(GET_OWNERS),
-      fetchWordPressGraphQL<any>(GET_SERVICE_AREAS),
-      fetchWordPressGraphQL<TestimonialsData>(GET_TESTIMONIALS),
-      fetchWordPressGraphQL<ClientsData>(GET_CLIENTS),
-      fetchWordPressGraphQL<ServicesResponse>(GET_ALL_SERVICES),
-      fetchWordPressGraphQL<ProjectsResponse>(GET_ALL_PROJECTS)
-    ]);
+        console.log("this is testimonialResponse", testimonialsResponse)
 
-    landingPageData = landingPageResponse?.data || null;
-    ownersData = ownersResponse?.data || null;
-    serviceAreasData = serviceAreasResponse?.data || null;
-    testimonialsData = testimonialsResponse?.data || null;
-    clientsData = clientsResponse?.data || null;
-    servicesData = servicesResponse?.data || null;
-    projectsData = projectsResponse?.data || null;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+        setLandingPageData(landingPageResponse?.data || null);
+        setOwnersData(ownersResponse?.data || null);
+        setServiceAreasData(serviceAreasResponse?.data || null);
+        setTestimonialsData(testimonialsResponse?.data || null);
+        setClientsData(clientsResponse?.data || null);
+        setServicesData(servicesResponse?.data || null);
+        setProjectsData(projectsResponse?.data || null);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  // Fetch service areas data from WordPress
-  try {
-    const response = await fetchWordPressGraphQL(GET_SERVICE_AREAS);
-    serviceAreasData = response.data;
-    console.log('Service areas data:', serviceAreasData);
-  } catch (error) {
-    console.error('Error fetching service areas data:', error);
-  }
-
-  // Fetch testimonials data from WordPress
-  try {
-    const response = await fetchWordPressGraphQL(GET_TESTIMONIALS);
-    testimonialsData = response.data as TestimonialsData;
-  } catch (error) {
-    console.error('Error fetching testimonials data:', error);
-  }
+    fetchData();
+  }, []);
 
   const serviceAreas = serviceAreasData?.serviceAreas?.nodes || [];
 
@@ -155,8 +154,19 @@ export default async function HomePage() {
           <div className="lg:col-span-5 relative">
           
             <div className="relative z-10 bg-white p-10 shadow-2xl">
-              <h3 className="text-display-3 text-neutral-950 mb-2">Get a Free Estimate</h3>
-              <p className="text-neutral-700/60 text-small mb-8">Professional service within 24 hours.</p>
+              <div className="flex items-center justify-between gap-4 mb-8">
+                <div>
+                  <h3 className="text-display-3 text-neutral-950">Get a Free Estimate</h3>
+                  <p className="text-neutral-700/60 text-small">Professional service within 24 hours.</p>
+                </div>
+                {landingPageData?.page?.landingPage?.formImage?.node?.mediaItemUrl && (
+                  <img 
+                    src={landingPageData?.page?.landingPage?.formImage?.node?.mediaItemUrl}
+                    alt="Estimate form"
+                    className="w-16 h-16 object-contain flex-shrink-0"
+                  />
+                )}
+              </div>
               
               <EstimateForm />
             </div>
@@ -369,6 +379,11 @@ export default async function HomePage() {
                       type: ["Professional Services"],
                       warranty: "Quality Guaranteed"
                     }
+                    },
+                    seo: {
+                      metaDesc: area.servicesArea?.introduction || "Professional electrical services for this area.",
+                      metaKeywords: "electrical services, contractor, puget sound",
+                      opengraphDescription: area.servicesArea?.introduction || "Professional electrical services for this area."
                     }
                   }}
                 />
@@ -584,27 +599,59 @@ export default async function HomePage() {
             <h3 className="testimonials-title text-neutral-950 text-lg md:text-2xl lg:text-3xl">What They Say</h3>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-12">
-            {testimonialsData?.testimonials?.nodes?.slice(0, 2).map((testimonial, index) => {
-              const firstName = testimonial.testimonialContent.firstName;
-              const lastName = testimonial.testimonialContent.lastName;
-              const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`;
-              const clientName = `${firstName} ${lastName}`;
-              const clientLocation = testimonial.testimonialContent.location;
-              const borderColor = index === 0 ? "primary" : "neutral";
+          {loading ? (
+            <div className="grid md:grid-cols-2 gap-12">
+              {[1, 2].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-white p-8 rounded-2xl shadow-lg border border-neutral-200">
+                    <div className="h-4 bg-neutral-200 rounded mb-4"></div>
+                    <div className="h-3 bg-neutral-200 rounded mb-2"></div>
+                    <div className="h-3 bg-neutral-200 rounded w-3/4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="grid md:grid-cols-2 gap-12">
+                {testimonialsData?.testimonials?.nodes
+                  .slice(
+                    (testimonialsPage - 1) * testimonialsPerPage,
+                    testimonialsPage * testimonialsPerPage
+                  )
+                  .map((testimonial, index) => {
+                    const firstName = testimonial.testimonialContent.firstName;
+                    const lastName = testimonial.testimonialContent.lastName;
+                    const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`;
+                    const clientName = `${firstName} ${lastName}`;
+                    const clientUrl = testimonial.testimonialContent.url;
+                    const borderColor = index === 0 ? "primary" : "neutral";
+
+                    return (
+                      <TestimonialCard
+                        key={testimonial.title}
+                        quote={testimonial.title}
+                        clientName={clientName}
+                        clientLocation=""
+                        initials={initials}
+                        borderColor={borderColor}
+                        clientUrl={clientUrl}
+                        isExpanded={allTestimonialsExpanded}
+                        onToggleExpand={() => setAllTestimonialsExpanded(!allTestimonialsExpanded)}
+                      />
+                    );
+                  })}
+              </div>
               
-              return (
-                <TestimonialCard
-                  key={testimonial.title}
-                  quote={testimonial.title}
-                  clientName={clientName}
-                  clientLocation={clientLocation}
-                  initials={initials}
-                  borderColor={borderColor}
+              {testimonialsData?.testimonials?.nodes && testimonialsData.testimonials.nodes.length > testimonialsPerPage && (
+                <Pagination
+                  currentPage={testimonialsPage}
+                  totalPages={Math.ceil(testimonialsData.testimonials.nodes.length / testimonialsPerPage)}
+                  onPageChange={setTestimonialsPage}
                 />
-              );
-            })}
-          </div>
+              )}
+            </>
+          )}
         </div>
       </section>
 

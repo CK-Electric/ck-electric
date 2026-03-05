@@ -2,6 +2,7 @@ import React from 'react';
 import Button from './Button';
 import RelatedArticles from './RelatedArticles';
 import CtaBox from './CtaBox';
+import { renderRichText } from '../lib/render-rich-text';
 
 interface Specification {
   label: string;
@@ -29,7 +30,7 @@ interface DetailViewProps {
 
   // Content Section Props
   contentTitle: string;
-  content: React.ReactNode;
+  content: string;
 
   // Sidebar Props
   specifications: Specification[];
@@ -72,6 +73,7 @@ export default function DetailView({
   relatedItems = [],
   relatedSectionType = 'services'
 }: DetailViewProps) {
+
   
   const getRelatedSectionTitle = () => {
     switch (relatedSectionType) {
@@ -134,7 +136,7 @@ export default function DetailView({
               <div className="w-20 h-1.5 bg-primary-500 rounded-full"></div>
             </div>
             <div className="space-y-4 text-neutral-600 text-base leading-relaxed">
-              {content}
+              {renderRichText(content)}
             </div>
             {showCtaBox && (
               <CtaBox

@@ -73,7 +73,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
         title={service.title}
         subtitle={stripHtml(service.servicesFields.smallDescription)}
         contentTitle="Service Details"
-        content={stripHtml(service.servicesFields.mainContentSection)}
+        content={service.servicesFields.mainContentSection || 'Professional electrical services with quality workmanship and attention to detail.'}
         specifications={specifications}
         primaryButtonText={service.servicesFields.heroSection.primaryCatText || "Get a Free Estimate"}
         primaryButtonHref={service.servicesFields.heroSection.primaryCtaLink || "/request-estimate"}

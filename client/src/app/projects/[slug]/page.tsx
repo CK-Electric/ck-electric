@@ -228,18 +228,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         
         // Content Section Props
         contentTitle="Project Overview"
-        content={
-          <div className="space-y-4 text-neutral-600 text-base leading-relaxed">
-            {project.projectFields?.mainContentSection ? (
-              <div dangerouslySetInnerHTML={{ __html: project.projectFields.mainContentSection }} />
-            ) : (
-              <p>
-                This project showcases our commitment to excellence in electrical services. 
-                From initial consultation to final completion, we ensure every aspect meets the highest standards of quality and safety.
-              </p>
-            )}
-          </div>
-        }
+        content={project.projectFields?.mainContentSection || `This project showcases our commitment to excellence in electrical services. From initial consultation to final completion, we ensure every aspect meets the highest standards of quality and safety.`}
         
         // Sidebar Specifications Props
         specifications={[
