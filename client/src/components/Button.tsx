@@ -65,15 +65,13 @@ export default function Button({
         aria-label={ariaLabel}
       >
         {icon && (
-          <div className="relative w-4 h-[19px]" aria-hidden="true">
+          <span className="flex items-center" aria-hidden="true">
             {icon}
-          </div>
-        )}
-        <div className="inline-flex items-center flex-col relative flex-[0_0_auto]">
-          <span className={`relative flex items-center justify-center w-fit mt-[-1.00px] text-small-bold ${textClasses[variant]} text-center whitespace-nowrap`}>
-            {label}
           </span>
-        </div>
+        )}
+        <span className={`text-small-bold ${textClasses[variant]} whitespace-nowrap`}>
+          {label}
+        </span>
       </a>
     );
   }
@@ -109,15 +107,13 @@ export default function Button({
       disabled={disabled}
     >
       {icon && (
-        <div className="relative w-4 h-[19px]" aria-hidden="true">
+        <span className="flex items-center" aria-hidden="true">
           {icon}
-        </div>
-      )}
-      <div className="inline-flex items-center flex-col relative flex-[0_0_auto]">
-        <span className={`relative flex items-center justify-center w-fit mt-[-1.00px] text-small-bold ${textClasses[variant]} text-center whitespace-nowrap`}>
-          {label}
         </span>
-      </div>
+      )}
+      <span className={`text-small-bold ${textClasses[variant]} whitespace-nowrap`}>
+        {label}
+      </span>
     </button>
   );
 }
