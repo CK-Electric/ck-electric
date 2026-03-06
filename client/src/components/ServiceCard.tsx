@@ -21,7 +21,7 @@ export default function ServiceCard({
   // Use WordPress data if available, otherwise use fallback props
   const serviceTitle = service?.title || title || "Service Title";
   const serviceDescription = service?.servicesFields?.smallDescription || description || "Service description";
-  const serviceLink = service ? `/services/${service.slug}` : link || "#";
+  const serviceLink = link || (service ? `/services/${service.slug}` : "#");
   
   return (
     <div className="group relative bg-white p-10 hover:-translate-y-2 transition-all duration-300 border-b-8 border-primary-500">
