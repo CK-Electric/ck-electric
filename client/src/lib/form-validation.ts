@@ -54,10 +54,7 @@ export function validateEstimateForm(data: Partial<FormData>): ValidationError[]
     errors.push({ field: 'project', message: 'Project description must be at least 10 characters long' });
   }
 
-  if (!data.address || data.address.trim().length < 5) {
-    errors.push({ field: 'address', message: 'Address must be at least 5 characters long' });
-  }
-
+  
   return errors;
 }
 
