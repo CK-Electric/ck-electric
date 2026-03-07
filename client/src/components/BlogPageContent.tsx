@@ -117,13 +117,6 @@ export default function BlogPageContent({ blogPosts, blogPageData }: BlogPageCon
             ))}
           </div>
           
-          <BlogPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            hasNext={hasNext}
-            hasPrevious={hasPrevious}
-            onPageChange={setCurrentPage}
-          />
         </div>
       </section>
     </>

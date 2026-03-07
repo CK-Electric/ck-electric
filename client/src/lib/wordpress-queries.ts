@@ -784,6 +784,7 @@ export const GET_BLOGS = `
   query blogs {
     blogs {
       nodes {
+      title
         seo {
           readingTime
           title
