@@ -576,6 +576,18 @@ export const GET_PROJECT_BY_SLUG = `
   }
 `;
 
+export const GET_PHONE_NUMBER = `
+  query GetPhoneNumber {
+    page(id: "cG9zdDoxMjI=") {
+      landingPage {
+        headerInfo {
+          contactPhoneNumber
+        }
+      }
+    }
+  }
+`;
+
 export const GET_HEADER_DATA = `
   query GetHeaderData {
     page(id: "cG9zdDoxMjI=") {

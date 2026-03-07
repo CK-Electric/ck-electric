@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { validateEstimateForm, ValidationError } from '@/lib/form-validation';
+import { GET_PHONE_NUMBER } from '@/lib/wordpress-queries';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -11,11 +12,30 @@ export async function POST(request: NextRequest) {
     const resendApiKey = process.env.RESEND_API_KEY;
     const emailTo = process.env.EMAIL_TO;
     
+    // Fetch phone number from WordPress GraphQL
+    let phoneNumber = null;
+    try {
+      const graphqlResponse = await fetch(process.env.NEXT_PUBLIC_WORDPRESS_API_URL!, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: GET_PHONE_NUMBER,
+        }),
+      });
+      
+      const graphqlData = await graphqlResponse.json();
+      phoneNumber = graphqlData.data?.page?.landingPage?.headerInfo?.contactPhoneNumber;
+    } catch (error) {
+      console.warn('Failed to fetch phone number from GraphQL:', error);
+    }
+    
     const body = await request.json();
     const { name, phone, email, project, address } = body;
 
     // Validate form data
-    const validationErrors = validateEstimateForm({ name, phone, email, project, address });
+    const validationErrors = validateEstimateForm({ name, phone, email, project });
     if (validationErrors.length > 0) {
       return NextResponse.json(
         { 
@@ -42,7 +62,7 @@ export async function POST(request: NextRequest) {
           <p style="margin: 5px 0;"><strong>Name:</strong> ${name}</p>
           <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
           <p style="margin: 5px 0;"><strong>Phone:</strong> ${phone}</p>
-          <p style="margin: 5px 0;"><strong>Project Address:</strong> ${address}</p>
+          <p style="margin: 5px 0;"><strong>Project Address:</strong> ${address || 'Not provided'}</p>
         </div>
         
         <div style="background: #f3f4f6; padding: 15px; border-radius: 8px;">
@@ -70,9 +90,9 @@ export async function POST(request: NextRequest) {
     `;
 
     const { data, error } = await resend.emails.send({
-      from: 'CK Electric Website <onboarding@resend.dev>',
+      from: 'CK Electric Website <hello@alecaceres.com>',
       to: [emailTo || 'hello@ckelectricps.com'],
-      subject: `🔌 New Estimate Request: ${name} - ${address}`,
+      subject: `🔌 New Estimate Request: ${name}${address ? ' - ' + address : ''}`,
       html: emailContent,
       replyTo: email,
     });
@@ -109,15 +129,14 @@ export async function POST(request: NextRequest) {
         
         <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #374151; margin: 0 0 10px 0;">Your Request Summary:</h3>
-          <p style="margin: 5px 0;"><strong>Project Address:</strong> ${address}</p>
           <p style="margin: 5px 0;"><strong>Project Details:</strong> ${project.substring(0, 200)}${project.length > 200 ? '...' : ''}</p>
         </div>
         
         <div style="margin: 30px 0;">
           <p style="color: #374151; font-weight: bold;">Questions or need to update your request?</p>
           <p style="color: #374151;">
-            Call us: <a href="tel:5550123456" style="color: #f59e0b; text-decoration: none;">(555) 012-3456</a><br>
-            Email us: <a href="mailto:hello@ckelectricps.com" style="color: #f59e0b; text-decoration: none;">hello@ckelectricps.com</a>
+            ${phoneNumber ? `Call us: <a href="tel:${phoneNumber}" style="color: #f59e0b; text-decoration: none;">${phoneNumber}</a><br>` : ''}
+            ${emailTo ? `Email us: <a href="mailto:${emailTo}" style="color: #f59e0b; text-decoration: none;">${emailTo}</a>` : ''}
           </p>
         </div>
         
@@ -130,7 +149,7 @@ export async function POST(request: NextRequest) {
     `;
 
     await resend.emails.send({
-      from: 'CK Electric <onboarding@resend.dev>',
+      from: 'CK Electric <hello@alecaceres.com>',
       to: [email],
       subject: 'Your CK Electric Estimate Request Has Been Received',
       html: confirmationContent,
