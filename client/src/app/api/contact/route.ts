@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
     // Check if environment variables are configured
     const resendApiKey = process.env.RESEND_API_KEY;
     const emailTo = process.env.EMAIL_TO;
+    const senderEmail = process.env.SENDER_EMAIL;
     
     // Fetch phone number from WordPress GraphQL
     let phoneNumber = null;
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
     `;
 
     const { data, error } = await resend.emails.send({
-      from: 'CK Electric Website <hello@alecaceres.com>',
+      from: `CK Electric Website <${senderEmail}>`,
       to: [emailTo || 'hello@ckelectricps.com'],
       subject: `New Contact Form: ${subject || 'General Inquiry'} - ${name}`,
       html: emailContent,
@@ -122,7 +123,7 @@ export async function POST(request: NextRequest) {
     `;
 
     await resend.emails.send({
-      from: 'CK Electric <hello@alecaceres.com>',
+      from: `CK Electric <${senderEmail}>`,
       to: [email],
       subject: 'Thank You for Contacting CK Electric',
       html: confirmationContent,
