@@ -35,6 +35,7 @@ export default function ServiceCard({
         icon={<ArrowRightAlt />}
         variant="tertiary"
         href={serviceLink}
+        ariaLabel={`Learn more about ${serviceTitle}`}
       />
     </div>
   );
