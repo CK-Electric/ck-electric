@@ -1,6 +1,3 @@
-'use client';
-
-import { useState } from 'react';
 import {
   Verified,
   Timer,
@@ -15,13 +12,12 @@ import {
   Email,
 } from '@mui/icons-material';
 import Button from './Button';
-import Pagination from './Pagination';
 import ServiceCard from './ServiceCard';
 import FeaturedProjectCard from './FeaturedProjectCard';
-import TestimonialCard from './TestimonialCard';
 import CtaBox from './CtaBox';
 import EstimateForm from './EstimateForm';
 import ClientLogo from './ClientLogo';
+import TestimonialsSection from './TestimonialsSection';
 import type {
   LandingPageData,
   OwnersData,
@@ -57,10 +53,6 @@ export default function HomePage({
   projectsData,
   contactPhone,
 }: HomePageProps) {
-  const [testimonialsPage, setTestimonialsPage] = useState(1);
-  const testimonialsPerPage = 2;
-  const [allTestimonialsExpanded, setAllTestimonialsExpanded] = useState(false);
-
   const serviceAreas = serviceAreasData?.serviceAreas?.nodes || [];
 
   // Use WordPress data if available, otherwise use fallbacks
@@ -644,47 +636,7 @@ export default function HomePage({
             <h3 className="testimonials-title text-neutral-950 text-lg md:text-2xl lg:text-3xl">What They Say</h3>
           </div>
 
-          {testimonialsData?.testimonials?.nodes && testimonialsData.testimonials.nodes.length > 0 ? (
-            <>
-              <div className="grid md:grid-cols-2 gap-12">
-                {testimonialsData.testimonials.nodes
-                  .slice(
-                    (testimonialsPage - 1) * testimonialsPerPage,
-                    testimonialsPage * testimonialsPerPage
-                  )
-                  .map((testimonial, index) => {
-                    const firstName = testimonial.testimonialContent.firstName;
-                    const lastName = testimonial.testimonialContent.lastName;
-                    const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`;
-                    const clientName = `${firstName} ${lastName}`;
-                    const clientUrl = testimonial.testimonialContent.url;
-                    const borderColor = index === 0 ? 'primary' : 'neutral';
-
-                    return (
-                      <TestimonialCard
-                        key={testimonial.title}
-                        quote={testimonial.title}
-                        clientName={clientName}
-                        clientLocation=""
-                        initials={initials}
-                        borderColor={borderColor}
-                        clientUrl={clientUrl}
-                        isExpanded={allTestimonialsExpanded}
-                        onToggleExpand={() => setAllTestimonialsExpanded(!allTestimonialsExpanded)}
-                      />
-                    );
-                  })}
-              </div>
-
-              {testimonialsData.testimonials.nodes.length > testimonialsPerPage && (
-                <Pagination
-                  currentPage={testimonialsPage}
-                  totalPages={Math.ceil(testimonialsData.testimonials.nodes.length / testimonialsPerPage)}
-                  onPageChange={setTestimonialsPage}
-                />
-              )}
-            </>
-          ) : null}
+          <TestimonialsSection testimonialsData={testimonialsData} />
         </div>
       </section>
 

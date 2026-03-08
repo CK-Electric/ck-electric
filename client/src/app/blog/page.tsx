@@ -38,7 +38,14 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function BlogPage() {
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+  const activeCategory = category || 'All Topics';
+
   try {
     // Fetch blog page data from WordPress
     const pageDataResponse = await fetchWordPressGraphQL<BlogPageData>(
@@ -75,9 +82,9 @@ export default async function BlogPage() {
       };
     }) || [];
 
-    return <BlogPageContent blogPosts={blogPosts} blogPageData={pageDataResponse?.page} />;
+    return <BlogPageContent blogPosts={blogPosts} blogPageData={pageDataResponse?.page} activeCategory={activeCategory} />;
   } catch (error) {
     console.error('Error loading blog page:', error);
-    return <BlogPageContent blogPosts={[]} blogPageData={undefined} />;
+    return <BlogPageContent blogPosts={[]} blogPageData={undefined} activeCategory={activeCategory} />;
   }
 }

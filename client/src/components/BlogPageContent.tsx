@@ -1,20 +1,14 @@
-'use client';
-
-import React from 'react';
 import BlogHero from '@/components/BlogHero';
 import BlogCard from '@/components/BlogCard';
 import BlogCategoryFilter from '@/components/BlogCategoryFilter';
-import BlogPagination from '@/components/BlogPagination';
 
 // Helper function to strip HTML tags and decode entities
 function stripHtml(html: string | undefined): string {
   if (!html) return '';
-  
-  // Remove HTML tags
+
   const text = html.replace(/<[^>]*>/g, '');
-  
-  // Decode HTML entities
-  const decoded = text
+
+  return text
     .replace(/&#8217;/g, "'")
     .replace(/&#8216;/g, "'")
     .replace(/&#8220;/g, '"')
@@ -26,10 +20,9 @@ function stripHtml(html: string | undefined): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ');
-  
-  // Clean up extra whitespace
-  return decoded.replace(/\s+/g, ' ').trim();
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 interface BlogPageContentProps {
@@ -66,25 +59,17 @@ interface BlogPageContentProps {
     title: string;
     content: string;
   };
+  activeCategory?: string;
 }
 
-export default function BlogPageContent({ blogPosts, blogPageData }: BlogPageContentProps) {
+export default function BlogPageContent({ blogPosts, blogPageData, activeCategory = 'All Topics' }: BlogPageContentProps) {
   const categories = ['All Topics', 'Residential', 'Commercial'];
-  const [activeCategory, setActiveCategory] = React.useState('All Topics');
-  const [currentPage, setCurrentPage] = React.useState(1);
 
-  const totalPages = 68;
-  const hasNext = currentPage < totalPages;
-  const hasPrevious = currentPage > 1;
-
-
-  // Clean the content for display
   const cleanContent = stripHtml(blogPageData?.content);
 
-  // Filter posts based on active category
-  const filteredPosts = activeCategory === 'All Topics' 
-    ? blogPosts 
-    : blogPosts.filter((post: any) => post.category === activeCategory);
+  const filteredPosts = activeCategory === 'All Topics'
+    ? blogPosts
+    : blogPosts.filter((post) => post.category === activeCategory);
 
   return (
     <>
@@ -97,17 +82,16 @@ export default function BlogPageContent({ blogPosts, blogPageData }: BlogPageCon
         secondaryButtonText={blogPageData?.ctaButtonsHero?.secondaryCtaText || "Call Us Now"}
         secondaryButtonHref={blogPageData?.ctaButtonsHero?.secondaryCtaLink || "tel:2062956363"}
       />
-      
+
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <BlogCategoryFilter
             categories={categories}
             activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-          />  
-          
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPosts.map((post: any) => (
+            {filteredPosts.map((post) => (
               <BlogCard
                 key={post.id}
                 image={post.image}
@@ -120,7 +104,6 @@ export default function BlogPageContent({ blogPosts, blogPageData }: BlogPageCon
               />
             ))}
           </div>
-          
         </div>
       </section>
     </>

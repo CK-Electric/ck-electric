@@ -1,16 +1,30 @@
-import React from 'react';
+'use client';
+
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 interface BlogCategoryFilterProps {
   categories: string[];
   activeCategory?: string;
-  onCategoryChange?: (category: string) => void;
 }
 
 export default function BlogCategoryFilter({
   categories,
   activeCategory = 'All Topics',
-  onCategoryChange
 }: BlogCategoryFilterProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  function handleCategoryChange(category: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (category === 'All Topics') {
+      params.delete('category');
+    } else {
+      params.set('category', category);
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
   return (
     <div className="flex flex-wrap gap-3 mb-12 justify-center">
       {categories.map((category) => (
@@ -21,7 +35,7 @@ export default function BlogCategoryFilter({
               ? 'bg-primary-500 text-neutral-950'
               : 'bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border border-neutral-200'
           }`}
-          onClick={() => onCategoryChange && onCategoryChange(category)}
+          onClick={() => handleCategoryChange(category)}
         >
           {category}
         </button>
