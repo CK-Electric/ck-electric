@@ -1,7 +1,11 @@
 import Image from 'next/image';
 import { Verified, Timer } from '@mui/icons-material';
-import EstimateForm from './EstimateForm';
+import dynamic from 'next/dynamic';
 import type { LandingPageData } from '../lib/wordpress-types';
+
+const EstimateForm = dynamic(() => import('./EstimateForm'), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse rounded-lg" />
+});
 
 interface Props {
   landingPageData: LandingPageData | null;
@@ -35,6 +39,9 @@ export default function HomeHeroSection({ landingPageData }: Props) {
           fill
           priority
           sizes="100vw"
+          quality={75}
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/8A8A"
         />
       </div>
 
@@ -97,6 +104,8 @@ export default function HomeHeroSection({ landingPageData }: Props) {
                   width={64}
                   height={64}
                   sizes="64px"
+                  quality={60}
+                  loading="lazy"
                 />
               )}
             </div>

@@ -1,13 +1,30 @@
+import dynamic from 'next/dynamic';
+import CtaBox from './CtaBox';
+
+// Load above-the-fold content immediately
 import HomeHeroSection from './HomeHeroSection';
-import HomeStatsSection from './HomeStatsSection';
 import HomeAboutSection from './HomeAboutSection';
 import HomeServicesSection from './HomeServicesSection';
-import HomeServiceAreasSection from './HomeServiceAreasSection';
-import HomeOwnersSection from './HomeOwnersSection';
-import HomeProjectsSection from './HomeProjectsSection';
-import HomeClientsSection from './HomeClientsSection';
-import HomeTestimonialsSection from './HomeTestimonialsSection';
-import CtaBox from './CtaBox';
+
+// Load below-the-fold content dynamically for better performance
+const HomeStatsSection = dynamic(() => import('./HomeStatsSection'), {
+  loading: () => <div className="py-32 bg-neutral-50 animate-pulse" />
+});
+const HomeServiceAreasSection = dynamic(() => import('./HomeServiceAreasSection'), {
+  loading: () => <div className="py-20 bg-white animate-pulse" />
+});
+const HomeOwnersSection = dynamic(() => import('./HomeOwnersSection'), {
+  loading: () => <div className="py-32 bg-neutral-50 animate-pulse" />
+});
+const HomeProjectsSection = dynamic(() => import('./HomeProjectsSection'), {
+  loading: () => <div className="py-32 bg-white animate-pulse" />
+});
+const HomeClientsSection = dynamic(() => import('./HomeClientsSection'), {
+  loading: () => <div className="py-24 bg-white animate-pulse" />
+});
+const HomeTestimonialsSection = dynamic(() => import('./HomeTestimonialsSection'), {
+  loading: () => <div className="py-32 bg-neutral-50 animate-pulse" />
+});
 import type {
   LandingPageData,
   OwnersData,

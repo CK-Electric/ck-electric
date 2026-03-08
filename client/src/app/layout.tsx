@@ -118,6 +118,34 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        {/* Preconnect to external domains for better performance */}
+        <link rel="preconnect" href="https://lh3.googleusercontent.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        {/* DNS prefetch for WordPress API */}
+        <link rel="dns-prefetch" href="https://ckelectric.kinsta.cloud" />
+        {/* Browser compatibility check */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var isIE = /*@cc_on!@*/false || !!document.documentMode;
+                var isOldChrome = !!(window.chrome && window.chrome.webstore) && navigator.userAgent.match(/Chrome\\/(\\d+)/) && parseInt(navigator.userAgent.match(/Chrome\\/(\\d+)/)[1]) < 90;
+                var isOldSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && parseFloat(navigator.userAgent.substring(navigator.userAgent.lastIndexOf('Version/') + 8, navigator.userAgent.length)) < 14;
+                
+                if (isIE || isOldChrome || isOldSafari) {
+                  document.body.className += ' browser-unsupported';
+                  var warning = document.createElement('div');
+                  warning.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#dc2626;color:white;padding:12px;text-align:center;z-index:9999;font-family:system-ui,-apple-system,sans-serif;font-size:14px;';
+                  warning.innerHTML = 'Your browser is not fully supported. <a href="https://browsehappy.com/" style="color:white;text-decoration:underline;">Please update your browser</a> for the best experience.';
+                  document.documentElement.insertBefore(warning, document.documentElement.firstChild);
+                }
+              })();
+            `
+          }}
+        />
+      </head>
       <body className={`${playfairDisplay.variable} ${inter.variable} antialiased`}>
         <script
           type="application/ld+json"

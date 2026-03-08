@@ -2,6 +2,41 @@
 @import "./tokens/colors.css";
 @import "./tokens/typography.css";
 
+/* Fallbacks for very old browsers */
+.browser-unsupported {
+  background: #f8f8f7 !important;
+}
+
+.browser-unsupported .animate-pulse,
+.browser-unsupported .animate-scroll-x,
+.browser-unsupported .group-hover\:translate-x-1,
+.browser-unsupported .hover\:translate-x-\[2px\],
+.browser-unsupported .hover\:translate-y-\[2px\],
+.browser-unsupported .hover\:-translate-y-2,
+.browser-unsupported .hover\:grayscale-0,
+.browser-unsupported .transition-all,
+.browser-unsupported .transition-transform,
+.browser-unsupported .transition-colors {
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.browser-unsupported .mix-blend-multiply {
+  mix-blend-mode: normal !important;
+  opacity: 0.3 !important;
+}
+
+.browser-unsupported .clip-diagonal,
+.browser-unsupported .clip-diagonal-reverse {
+  clip-path: none !important;
+}
+
+/* Fallback message styling */
+.browser-unsupported .browser-warning {
+  display: block !important;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
