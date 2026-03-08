@@ -28,7 +28,7 @@ export default function ServiceCard({
       <div className="w-16 h-16 bg-neutral-950 text-primary-500 flex items-center justify-center mb-8">
         {icon}
       </div>
-      <h4 className="text-display-4 text-neutral-950 mb-4">{serviceTitle}</h4>
+      <h2 className="text-display-4 text-neutral-950 mb-4">{serviceTitle}</h2>
       <p className="text-neutral-700 text-small leading-relaxed mb-8">{serviceDescription}</p>
       <Button
         label="Learn More"

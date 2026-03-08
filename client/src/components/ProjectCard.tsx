@@ -57,9 +57,9 @@ export default function ProjectCard({
             <span>{location}</span>
           </div>
           
-          <h3 className="text-base-bold text-neutral-950 group-hover:text-primary-500 transition-colors mb-3">
+          <h2 className="text-base-bold text-neutral-950 group-hover:text-primary-500 transition-colors mb-3">
             {projectName}
-          </h3>
+          </h2>
           
           <p className="text-neutral-600 text-sm leading-relaxed mb-6 flex-grow">
             {description}
