@@ -27,7 +27,7 @@ function OwnerCard({ owner, rotate }: { owner: NonNullable<OwnersData['matt']>; 
         </div>
         <div>
           <h4 className="text-display-4 font-black text-neutral-950">{owner.owners.fullName}</h4>
-          <p className="text-primary-700 text-[10px] font-black uppercase tracking-widest mb-2">{owner.owners.position}</p>
+          <p className="text-primary-800 text-[10px] font-black uppercase tracking-widest mb-2">{owner.owners.position}</p>
           {owner.owners.email && (
             <div className="flex items-center gap-2 mb-4">
               <Email className="w-3 h-3 text-primary-600" aria-hidden="true" />
@@ -66,7 +66,7 @@ export default function HomeOwnersSection({ ownersData }: Props) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8 text-center md:text-left">
           <div className="max-w-xl mx-auto md:mx-0">
-            <h2 className="text-primary-700 font-black text-xs tracking-[0.4em] uppercase mb-4 md:text-sm lg:text-base">Experts on Site</h2>
+            <h2 className="text-primary-800 font-black text-xs tracking-[0.4em] uppercase mb-4 md:text-sm lg:text-base">Experts on Site</h2>
             <h3 className="team-title text-neutral-950 text-lg md:text-2xl lg:text-3xl">Meet the Owners</h3>
           </div>
           <p className="text-neutral-700 font-medium max-w-sm border-l-4 border-primary-500 pl-6 mx-auto md:mx-0">Licensed Electrical Contractors with decades of combined experience in Puget Sound.</p>

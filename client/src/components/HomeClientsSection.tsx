@@ -13,7 +13,7 @@ export default function HomeClientsSection({ clientsData }: Props) {
     <section className="py-24 bg-white" aria-label="Our clients">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center mb-16">
-          <h2 className="text-primary-700 font-black text-xs tracking-[0.4em] uppercase mb-4 md:text-sm lg:text-base">Our Clients</h2>
+          <h2 className="text-primary-800 font-black text-xs tracking-[0.4em] uppercase mb-4 md:text-sm lg:text-base">Our Clients</h2>
           <h3 className="testimonials-title text-neutral-950 text-lg md:text-2xl lg:text-3xl">Trusted by Industry Leaders</h3>
         </div>
 

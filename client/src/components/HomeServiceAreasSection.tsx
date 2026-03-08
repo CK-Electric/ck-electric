@@ -20,7 +20,7 @@ export default function HomeServiceAreasSection({ serviceAreasData, contactPhone
     <section className="py-20 bg-white" id="service-areas">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-primary-700 font-black text-xs tracking-[0.4em] uppercase mb-4">SERVICE AREAS</h2>
+          <h2 className="text-primary-800 font-black text-xs tracking-[0.4em] uppercase mb-4">SERVICE AREAS</h2>
           <h3 className="text-display-2 text-neutral-950 text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
             Serving the Entire Puget Sound Region
           </h3>

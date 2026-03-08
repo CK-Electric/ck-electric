@@ -32,6 +32,7 @@ export default function ServiceCard({
       <p className="text-neutral-700 text-small leading-relaxed mb-8">{serviceDescription}</p>
       <Button
         label="Learn More"
+        labelSuffix={` about ${serviceTitle}`}
         icon={<ArrowRightAlt />}
         variant="tertiary"
         href={serviceLink}

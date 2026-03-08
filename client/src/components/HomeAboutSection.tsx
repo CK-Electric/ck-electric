@@ -38,7 +38,7 @@ export default function HomeAboutSection({ landingPageData }: Props) {
           </div>
 
           <div className="w-full md:w-1/2">
-            <h2 className="text-primary-700 text-base-upper mb-4">{aboutTitle}</h2>
+            <h2 className="text-primary-800 text-base-upper mb-4">{aboutTitle}</h2>
             <h3 className="about-title text-neutral-950 mb-8 leading-tight">
               {aboutSubtitle}
             </h3>

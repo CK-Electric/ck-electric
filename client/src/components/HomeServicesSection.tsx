@@ -19,7 +19,7 @@ export default function HomeServicesSection({ servicesData }: Props) {
     <section className="py-32 bg-primary-100 md:clip-diagonal-reverse" id="services">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
         <div className="text-center mb-24">
-          <h2 className="text-primary-700 text-base-upper mb-4 md:text-lg lg:text-xl">What We Do</h2>
+          <h2 className="text-primary-800 text-base-upper mb-4 md:text-lg lg:text-xl">What We Do</h2>
           <h3 className="services-title text-neutral-950 text-lg md:text-2xl lg:text-3xl">Full-Spectrum Services</h3>
         </div>
 

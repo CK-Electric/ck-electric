@@ -56,7 +56,7 @@ export default function TestimonialCard({
               <span className="text-primary-500 font-normal not-italic">...</span>
               <button
                 onClick={() => onToggleExpand?.()}
-                className="text-primary-700 text-sm font-bold hover:text-primary-800 transition-colors ml-1 underline"
+                className="text-primary-800 text-sm font-bold hover:text-primary-900 transition-colors ml-1 underline"
               >
                 {isExpanded ? 'Read less' : 'Read more'}
               </button>
@@ -79,7 +79,7 @@ export default function TestimonialCard({
               href={clientUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary-700 text-[10px] font-bold uppercase hover:text-primary-800 transition-colors"
+              className="text-primary-800 text-[10px] font-bold uppercase hover:text-primary-900 transition-colors"
             >
               View in Google Maps →
             </a>

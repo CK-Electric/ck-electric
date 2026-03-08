@@ -10,6 +10,7 @@ interface ButtonProps {
   ariaLabel?: string;
   className?: string;
   disabled?: boolean;
+  labelSuffix?: string;
 }
 
 export default function Button({
@@ -22,6 +23,7 @@ export default function Button({
   ariaLabel,
   className = '',
   disabled = false,
+  labelSuffix,
 }: ButtonProps) {
   const baseClasses = "inline-flex items-center justify-center gap-2 px-6 py-3 relative flex-[0_0_auto] transition-all cursor-pointer rounded";
   
@@ -48,6 +50,11 @@ export default function Button({
         >
           <span className="inline-flex items-center">
             {label}
+            {labelSuffix && (
+              <span className="sr-only">
+                {labelSuffix}
+              </span>
+            )}
             {icon && (
               <span className=" ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true">
                 {icon}
@@ -71,6 +78,11 @@ export default function Button({
         )}
         <span className={`text-small-bold ${textClasses[variant]} whitespace-nowrap`}>
           {label}
+          {labelSuffix && (
+            <span className="sr-only">
+              {labelSuffix}
+            </span>
+          )}
         </span>
       </a>
     );
@@ -88,6 +100,11 @@ export default function Button({
       >
         <span className="inline-flex items-center">
           {label}
+          {labelSuffix && (
+            <span className="sr-only">
+              {labelSuffix}
+            </span>
+          )}
           {icon && (
             <span className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true">
               {icon}
@@ -113,6 +130,11 @@ export default function Button({
       )}
       <span className={`text-small-bold ${textClasses[variant]} whitespace-nowrap`}>
         {label}
+        {labelSuffix && (
+          <span className="sr-only">
+            {labelSuffix}
+          </span>
+        )}
       </span>
     </button>
   );
