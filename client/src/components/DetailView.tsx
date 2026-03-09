@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Button from './Button';
 import RelatedArticles from './RelatedArticles';
 import CtaBox from './CtaBox';
@@ -165,7 +166,7 @@ export default function DetailView({
                     key={index}
                     className={`flex flex-col gap-1 pb-4 ${index < specifications.length - 1 ? 'border-b border-primary-500/10' : ''}`}
                   >
-                    <p className="text-primary-500 text-small-upper font-bold uppercase tracking-widest">
+                    <p className="text-primary-800 text-small-upper font-bold uppercase tracking-widest">
                       {spec.label}
                     </p>
                     <p className="text-neutral-950 font-semibold">
@@ -200,29 +201,38 @@ export default function DetailView({
             {/* Desktop editorial grid */}
             <div className="hidden md:grid grid-cols-12 gap-4 auto-rows-[280px]">
               <div className="col-span-7 row-span-2 relative overflow-hidden rounded-2xl">
-                <img
+                <Image
                   src={projectImages[0]}
                   alt="Project photo 1"
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  className="object-cover transition-transform duration-500 hover:scale-105"
+                  fill
+                  loading="lazy"
+                  sizes="(max-width: 768px) 100vw, 58vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/40 to-transparent pointer-events-none" />
               </div>
               {projectImages[1] && (
                 <div className="col-span-5 row-span-1 relative overflow-hidden rounded-2xl">
-                  <img
+                  <Image
                     src={projectImages[1]}
                     alt="Project photo 2"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, 42vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/40 to-transparent pointer-events-none" />
                 </div>
               )}
               {projectImages[2] && (
                 <div className="col-span-5 row-span-1 relative overflow-hidden rounded-2xl">
-                  <img
+                  <Image
                     src={projectImages[2]}
                     alt="Project photo 3"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, 42vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/40 to-transparent pointer-events-none" />
                 </div>
@@ -236,10 +246,13 @@ export default function DetailView({
                   key={i}
                   className="snap-center flex-none w-[85vw] h-[240px] relative overflow-hidden rounded-2xl"
                 >
-                  <img
+                  <Image
                     src={img}
                     alt={`Project photo ${i + 1}`}
-                    className="w-full h-full object-cover"
+                    className="object-cover"
+                    fill
+                    loading="lazy"
+                    sizes="85vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/40 to-transparent pointer-events-none" />
                 </div>

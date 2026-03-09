@@ -118,6 +118,10 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://ckelectric.kinsta.cloud" />
+        <link rel="preconnect" href="https://lh3.googleusercontent.com" crossOrigin="" />
+      </head>
       <body className={`${playfairDisplay.variable} ${inter.variable} antialiased`}>
         <script
           type="application/ld+json"

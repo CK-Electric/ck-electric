@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Image from 'next/image';
 import Button from './Button';
 
 interface BlogHeroProps {
@@ -24,12 +24,13 @@ export default function BlogHero({
   return (
     <section className="relative py-32 overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <img
+        <Image
           alt="Electrician at work"
-          className="w-full h-full object-cover"
+          className="object-cover"
           src={backgroundImage}
-          width={1920}
-          height={1080}
+          fill
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/80 via-neutral-950/60 to-transparent"></div>
       </div>

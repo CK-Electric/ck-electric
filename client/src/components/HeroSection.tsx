@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Button from './Button';
 
 interface HeroSectionProps {
@@ -26,10 +27,13 @@ export default function HeroSection({
     <section className="relative py-16 md:py-32 overflow-hidden">
       <div className="absolute inset-0 z-0">
         {backgroundImage && (
-          <img 
-            alt="Professional electrical work" 
-            className="w-full h-full object-cover" 
+          <Image
+            alt="Professional electrical work"
+            className="object-cover"
             src={backgroundImage}
+            fill
+            priority
+            sizes="100vw"
           />
         )}
         <div className="absolute inset-0 bg-neutral-950/75"></div>

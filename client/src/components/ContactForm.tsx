@@ -144,7 +144,7 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                 {/* Left: Contact Information */}
                 <div className="bg-primary-50 p-8 rounded-2xl border border-primary-500/20 space-y-10">
                   <div>
-                    <h3 className="text-display-5-upper text-primary-500 mb-6">Contact Information</h3>
+                    <h2 className="text-display-5-upper text-primary-800 mb-6">Contact Information</h2>
                     <div className="space-y-6">
                       <div className="flex items-start gap-4">
                         <div className="bg-primary-100 p-3 rounded-lg text-primary-500">
@@ -191,7 +191,7 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                     <CheckCircle className="text-4xl text-primary-500 flex-shrink-0" />
                     <div>
                       <p className="text-base-bold text-neutral-950 font-black leading-tight">{pageData?.contactInformation?.extraInfo?.title || "Fully Licensed & Insured"}</p>
-                      <p className="text-small-upper text-neutral-500">{pageData?.contactInformation?.extraInfo?.subtitle || "Certified Professional"}</p>
+                      <p className="text-small-upper text-neutral-600">{pageData?.contactInformation?.extraInfo?.subtitle || "Certified Professional"}</p>
                     </div>
                   </div>
                   
