@@ -2,36 +2,9 @@
 
 import { useState } from 'react';
 import { Facebook, LinkedIn, Star, CheckCircle, Phone, Mail, LocationOn, AccessTime } from '@mui/icons-material';
-import HeroSection from '@/components/HeroSection';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import SocialLinks from '@/components/SocialLinks';
-
-// Helper function to strip HTML tags and decode entities
-function stripHtml(html: string | undefined): string {
-  if (!html) return '';
-  
-  // Remove HTML tags
-  const text = html.replace(/<[^>]*>/g, '');
-  
-  // Decode HTML entities
-  const decoded = text
-    .replace(/&#8217;/g, "'")
-    .replace(/&#8216;/g, "'")
-    .replace(/&#8220;/g, '"')
-    .replace(/&#8221;/g, '"')
-    .replace(/&#8211;/g, '–')
-    .replace(/&#8212;/g, '—')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ');
-  
-  // Clean up extra whitespace
-  return decoded.replace(/\s+/g, ' ').trim();
-}
 
 interface ContactFormProps {
   pageData: {
@@ -126,15 +99,7 @@ export default function ContactForm({ pageData }: ContactFormProps) {
   ];
 
   return (
-    <>
-      <HeroSection
-        title={pageData?.title || "Get in Touch"}
-        subtitle={stripHtml(pageData?.content) || "Ready to start your electrical project? Contact our team for expert service and competitive pricing across Puget Sound."}
-        hideCTA={true}
-        backgroundImage="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&h=1080&fit=crop"
-      />
-      
-      <section className="py-20 bg-neutral-50">
+    <section className="py-20 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           
@@ -196,8 +161,9 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                   </div>
                   
                   {/* Social Icons */}
-                  <SocialLinks 
+                  <SocialLinks
                     socialLinks={socialLinks}
+                    titleAs="h3"
                     titleClassName="text-base-bold text-neutral-950"
                     linkClassName="w-12 h-12 bg-warning-500 text-white hover:bg-warning-600 rounded-full flex items-center justify-center transition-colors"
                   />
@@ -284,7 +250,6 @@ export default function ContactForm({ pageData }: ContactFormProps) {
             </div>
           </div>
         </div>
-      </section>
-    </>
+    </section>
   );
 }

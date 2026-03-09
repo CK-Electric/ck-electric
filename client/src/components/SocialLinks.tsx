@@ -9,6 +9,7 @@ interface SocialLink {
 interface SocialLinksProps {
   socialLinks: SocialLink[];
   title?: string;
+  titleAs?: 'h2' | 'h3' | 'h4' | 'p';
   className?: string;
   titleClassName?: string;
   containerClassName?: string;
@@ -18,6 +19,7 @@ interface SocialLinksProps {
 export default function SocialLinks({
   socialLinks,
   title = "Follow Us",
+  titleAs: TitleTag = "h4",
   className = "space-y-4",
   titleClassName = "text-base-bold text-white",
   containerClassName = "flex gap-3",
@@ -25,7 +27,7 @@ export default function SocialLinks({
 }: SocialLinksProps) {
   return (
     <div className={className}>
-      <h4 className={titleClassName}>{title}</h4>
+      <TitleTag className={titleClassName}>{title}</TitleTag>
       <div className={containerClassName}>
         {socialLinks.map((social) => (
           <a

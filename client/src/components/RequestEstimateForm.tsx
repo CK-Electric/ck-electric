@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Facebook, LinkedIn, Star, CheckCircle, Phone, Mail, LocationOn, AccessTime } from '@mui/icons-material';
-import HeroSection from '@/components/HeroSection';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import SocialLinks from '@/components/SocialLinks';
@@ -68,28 +67,15 @@ export default function RequestEstimateForm({ pageData }: RequestEstimateFormPro
     { icon: <Facebook className="text-xl" />, href: "#facebook", label: "Facebook" },
   ];
 
-  // Helper function to strip HTML tags
-  const stripHtml = (html: string): string => {
-    return html.replace(/<[^>]*>/g, '').trim();
-  };
-
   return (
-    <>
-      <HeroSection
-        title={pageData?.page?.title || "Request a Free Estimate for electrical services"}
-        subtitle={stripHtml(pageData?.page?.content || "We specialize in Commercial TIs, Panel Upgrades, and EV Chargers throughout Tacoma and nearby areas. If you're searching for a trusted contractor offering fair pricing and professional results, our team is ready to help.")}
-        hideCTA={true}
-        backgroundImage={pageData?.page?.featuredImage?.node?.mediaItemUrl || "https://images.unsplash.com/photo-1603796826034-2a34491c3b2e?w=1920&h=1080&fit=crop"}
-      />
-      
-      <section className="py-20 bg-neutral-50">
+    <section className="py-20 bg-neutral-50">
         <div className="max-w-5xl mx-auto">
           <div className="bg-white p-8 md:p-12 rounded-3xl shadow-2xl border border-neutral-200">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Left: Estimate Process */}
                 <div className="bg-primary-50 p-8 rounded-2xl border border-primary-500/20 space-y-10">
                   <div>
-                    <h3 className="text-display-5-upper text-primary-500 mb-6">How our estimate process works</h3>
+                    <h2 className="text-display-5-upper text-primary-800 mb-6">How our estimate process works</h2>
                     <div className="space-y-6">
                       <div className="flex items-start gap-4">
                         <div className="bg-primary-100 p-3 rounded-lg text-primary-500 flex-shrink-0">
@@ -203,7 +189,6 @@ export default function RequestEstimateForm({ pageData }: RequestEstimateFormPro
               </div>
             </div>
         </div>
-      </section>
-    </>
+    </section>
   );
 }

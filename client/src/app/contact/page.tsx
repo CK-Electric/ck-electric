@@ -1,7 +1,20 @@
 import { Metadata } from 'next';
 import ContactForm from '@/components/ContactForm';
+import HeroSection from '@/components/HeroSection';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { GET_CONTACT_PAGE } from '@/lib/wordpress-queries';
+
+function stripHtml(html: string | undefined): string {
+  if (!html) return '';
+  return html
+    .replace(/<[^>]*>/g, '')
+    .replace(/&#8217;/g, "'").replace(/&#8216;/g, "'")
+    .replace(/&#8220;/g, '"').replace(/&#8221;/g, '"')
+    .replace(/&#8211;/g, '–').replace(/&#8212;/g, '—')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
 
 interface ContactPageData {
   page: {
@@ -41,5 +54,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const data = await fetchWordPressGraphQL<ContactPageData>(GET_CONTACT_PAGE);
-  return <ContactForm pageData={data?.page ?? null} />;
+  const page = data?.page;
+  return (
+    <>
+      <HeroSection
+        title={page?.title || "Get in Touch"}
+        subtitle={stripHtml(page?.content) || "Ready to start your electrical project? Contact our team for expert service and competitive pricing across Puget Sound."}
+        hideCTA={true}
+        backgroundImage="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&h=1080&fit=crop"
+      />
+      <ContactForm pageData={page ?? null} />
+    </>
+  );
 }
