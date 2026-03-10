@@ -29,6 +29,12 @@ export interface AboutUs {
   subtitle: string;
   title: string;
   itemsList: ItemsList;
+  aboutUsImage?: {
+    node: {
+      mediaItemUrl: string;
+      altText?: string;
+    };
+  };
 }
 
 export interface HeroFeature {

@@ -10,8 +10,8 @@ function OwnerCard({ owner, rotate }: { owner: NonNullable<OwnersData['matt']>; 
     <div className="relative group">
       <div className={`absolute inset-0 bg-neutral-950 ${rotate} group-hover:rotate-0 transition-transform`}></div>
       <div className="relative bg-white p-8 flex flex-col sm:flex-row gap-8 items-center border border-neutral-950/10">
-        <div className={`w-40 h-40 bg-neutral-200 flex-shrink-0 overflow-hidden ${rotate === 'rotate-1' ? 'skew-x-3' : '-skew-x-3'}`}>
-          {owner.featuredImage?.node?.mediaItemUrl ? (
+        {owner.featuredImage?.node?.mediaItemUrl && (
+          <div className={`w-40 h-40 bg-neutral-200 flex-shrink-0 overflow-hidden ${rotate === 'rotate-1' ? 'skew-x-3' : '-skew-x-3'}`}>
             <img
               alt={owner.owners.fullName}
               className={`w-full h-full object-cover ${rotate === 'rotate-1' ? '-skew-x-3' : 'skew-x-3'} grayscale group-hover:grayscale-0 transition-all duration-500 scale-110`}
@@ -19,12 +19,8 @@ function OwnerCard({ owner, rotate }: { owner: NonNullable<OwnersData['matt']>; 
               width={160}
               height={160}
             />
-          ) : (
-            <div className="w-full h-full bg-neutral-300 flex items-center justify-center">
-              <span className="text-neutral-600 text-sm">{owner.owners.fullName.charAt(0)}</span>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
         <div>
           <h4 className="text-display-4 font-black text-neutral-950">{owner.owners.fullName}</h4>
           <p className="text-primary-800 text-[10px] font-black uppercase tracking-widest mb-2">{owner.owners.position}</p>

@@ -246,6 +246,12 @@ export const GET_LANDING_PAGE = `
             item2
             item3
           }
+          aboutUsImage {
+            node {
+              mediaItemUrl
+              altText
+            }
+          }
         }
         tag
       }
