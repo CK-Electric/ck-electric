@@ -25,7 +25,13 @@ export default function HomeServicesSection({ servicesData }: Props) {
 
         <div className="grid md:grid-cols-3 gap-8">
           {servicesData?.services?.nodes && servicesData.services.nodes.length > 0
-            ? servicesData.services.nodes.slice(0, 6).map((service) => (
+            ? servicesData.services.nodes
+                .filter((service) =>
+                  service.servicesFields?.heroSection?.tags?.nodes?.some(
+                    (tag) => tag.name.toLowerCase() === 'featured'
+                  )
+                )
+                .map((service) => (
                 <ServiceCard
                   key={service.id}
                   service={service}
