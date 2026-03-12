@@ -59,29 +59,24 @@ export default function ContactForm({ pageData }: ContactFormProps) {
     setIsSubmitting(true);
     setStatusMessage('');
 
+    const encode = (data: Record<string, string>) =>
+      Object.keys(data)
+        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
+        .join('&');
+
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encode({ 'form-name': 'contact', ...formData }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        setStatusMessage(data.message);
+        setStatusMessage("Thank you! We'll get back to you within 24 hours.");
         setStatusType('success');
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          subject: 'General Inquiry',
-          message: ''
-        });
+        setFormData({ name: '', email: '', phone: '', subject: 'General Inquiry', message: '' });
       } else {
-        setStatusMessage(data.error || 'Failed to send message. Please try again.');
+        setStatusMessage('Failed to send message. Please try again.');
         setStatusType('error');
       }
     } catch (error) {
@@ -171,7 +166,8 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                 
                 {/* Right: Contact Form */}
                 <div>
-                  <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+                  <form className="grid grid-cols-1 md:grid-cols-2 gap-6" name="contact" data-netlify="true" onSubmit={handleSubmit}>
+                    <input type="hidden" name="form-name" value="contact" />
                     <Input
                       label="Full Name"
                       name="name"

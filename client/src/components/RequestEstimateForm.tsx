@@ -31,28 +31,24 @@ export default function RequestEstimateForm({ pageData }: RequestEstimateFormPro
     setIsSubmitting(true);
     setStatusMessage('');
 
+    const encode = (data: Record<string, string>) =>
+      Object.keys(data)
+        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
+        .join('&');
+
     try {
-      const response = await fetch('/api/estimate', {
+      const response = await fetch('/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encode({ 'form-name': 'estimate-request', ...formData }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        setStatusMessage(data.message);
+        setStatusMessage("Estimate request submitted! We'll contact you within 24 hours.");
         setStatusType('success');
-        setFormData({
-          name: '',
-          phone: '',
-          email: '',
-          project: ''
-        });
+        setFormData({ name: '', phone: '', email: '', project: '' });
       } else {
-        setStatusMessage(data.error || 'Failed to submit estimate request. Please try again.');
+        setStatusMessage('Failed to submit estimate request. Please try again.');
         setStatusType('error');
       }
     } catch (error) {
@@ -127,7 +123,8 @@ export default function RequestEstimateForm({ pageData }: RequestEstimateFormPro
                 
                 {/* Right: Estimate Form */}
                 <div>
-                  <form className="grid grid-cols-1 gap-6" onSubmit={handleSubmit}>
+                  <form className="grid grid-cols-1 gap-6" name="estimate-request" data-netlify="true" onSubmit={handleSubmit}>
+                    <input type="hidden" name="form-name" value="estimate-request" />
                     <Input
                       label="Full Name"
                       name="name"
