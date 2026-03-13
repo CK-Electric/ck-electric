@@ -37,7 +37,7 @@ export default function RequestEstimateForm({ pageData }: RequestEstimateFormPro
         .join('&');
 
     try {
-      const response = await fetch('/', {
+      const response = await fetch('/estimate-form.html', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: encode({ 'form-name': 'estimate-request', ...formData }),

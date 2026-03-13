@@ -32,7 +32,7 @@ export default function EstimateForm() {
         .join('&');
 
     try {
-      const response = await fetch('/', {
+      const response = await fetch('/estimate-form.html', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: encode({ 'form-name': 'estimate', ...formData }),
