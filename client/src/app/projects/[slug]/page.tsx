@@ -132,17 +132,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       readTime: '5 min read',
     }));
 
-  const FALLBACK_IMAGES = [
-    'https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=1200&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&h=800&fit=crop',
-    'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1200&h=800&fit=crop',
-  ];
 
   const projectImages = [
-    project.projectFields?.image1?.node?.mediaItemUrl || FALLBACK_IMAGES[0],
-    project.projectFields?.image2?.node?.mediaItemUrl || FALLBACK_IMAGES[1],
-    project.projectFields?.image3?.node?.mediaItemUrl || FALLBACK_IMAGES[2],
-  ];
+    project.projectFields?.image1?.node?.mediaItemUrl,
+    project.projectFields?.image2?.node?.mediaItemUrl,
+    project.projectFields?.image3?.node?.mediaItemUrl,
+  ].filter((url): url is string => Boolean(url));
 
   return (
     <DetailView
