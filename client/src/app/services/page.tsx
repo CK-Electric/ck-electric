@@ -2,6 +2,7 @@ import { GET_SERVICES_PAGE, GET_ALL_SERVICES, GET_LANDING_PAGE } from '@/lib/wor
 import { ServicesPageData, ServicesResponse } from '@/lib/wordpress-types';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { Metadata } from 'next';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 import HeroSection from '@/components/HeroSection';
 import ServicesSearch from '@/components/ServicesSearch';
 
@@ -29,23 +30,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const pageData = await fetchWordPressGraphQL<ServicesPageData>(GET_SERVICES_PAGE);
   const page = pageData?.page;
 
-  return {
-    title: page?.title || 'Electrical Services',
-    description:
-      page?.seo?.metaDesc ||
-      'Professional electrical services including commercial TIs, wiring, panel upgrades, EV charger installation, and emergency repair across Puget Sound.',
-    keywords:
-      page?.seo?.metaKeywords ||
-      'electrical services, commercial electrical, residential electrical, EV charger installation, panel upgrades, emergency repair, Puget Sound',
-    openGraph: {
-      title: page?.title || 'Electrical Services | CK Electric',
-      description: page?.seo?.opengraphDescription || page?.seo?.metaDesc || '',
-      type: 'website',
-      images: (page?.seo as any)?.opengraphImage?.mediaItemUrl
-        ? [{ url: (page?.seo as any).opengraphImage.mediaItemUrl, width: 1200, height: 630, alt: 'CK Electric Services' }]
-        : [],
-    },
-  };
+  return buildMetadata(page?.seo as any, {
+    title: page?.title || 'Electrical Services | CK Electric',
+    description: 'Professional electrical services including commercial TIs, wiring, panel upgrades, EV charger installation, and emergency repair across Puget Sound.',
+    keywords: 'electrical services, commercial electrical, residential electrical, EV charger installation, panel upgrades, emergency repair, Puget Sound',
+    url: `${SITE_URL}/services`,
+    image: page?.featuredImage?.node?.mediaItemUrl,
+  });
 }
 
 export default async function ServicesPage() {

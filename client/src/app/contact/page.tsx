@@ -3,6 +3,7 @@ import ContactForm from '@/components/ContactForm';
 import HeroSection from '@/components/HeroSection';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { GET_CONTACT_PAGE } from '@/lib/wordpress-queries';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 
 function stripHtml(html: string | undefined): string {
   if (!html) return '';
@@ -48,13 +49,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const data = await fetchWordPressGraphQL<ContactPageData>(GET_CONTACT_PAGE);
   const page = data?.page;
 
-  return {
-    title: page?.title || 'Contact Us',
-    description:
-      page?.seo?.metaDesc ||
-      'Contact CK Electric for expert commercial and residential electrical services across Puget Sound. Licensed, bonded, and ready to help.',
-    keywords: page?.seo?.metaKeywords || 'contact electrician, hire electrician Puget Sound, CK Electric contact',
-  };
+  return buildMetadata(page?.seo as any, {
+    title: page?.title || 'Contact Us | CK Electric',
+    description: 'Contact CK Electric for expert commercial and residential electrical services across Puget Sound. Licensed, bonded, and ready to help.',
+    keywords: 'contact electrician, hire electrician Puget Sound, CK Electric contact',
+    url: `${SITE_URL}/contact`,
+    image: page?.featuredImage?.node?.mediaItemUrl,
+  });
 }
 
 export default async function ContactPage() {

@@ -2,6 +2,7 @@ import { GET_ALL_PROJECTS, GET_PROJECTS_PAGE } from '@/lib/wordpress-queries';
 import type { ProjectsPageData } from '@/lib/wordpress-types';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { Metadata } from 'next';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 import HeroSection from '@/components/HeroSection';
 import ProjectCard from '@/components/ProjectCard';
 
@@ -63,28 +64,17 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const page = pageData?.page;
   const projectCount = projectsData?.projects?.nodes?.length || 0;
+  const fallbackDesc = projectCount > 0
+    ? `Browse ${projectCount} completed electrical projects by CK Electric across Puget Sound.`
+    : 'Discover our industrial electrical projects and solutions across Puget Sound.';
 
-  return {
-    title: page?.title || `Electrical Projects Portfolio`,
-    description:
-      page?.seo?.metaDesc ||
-      (projectCount > 0
-        ? `Browse ${projectCount} completed electrical projects by CK Electric across Puget Sound.`
-        : 'Discover our industrial electrical projects and solutions across Puget Sound.'),
-    keywords:
-      page?.seo?.metaKeywords ||
-      'electrical projects, commercial electrical portfolio, industrial electrical, Puget Sound electrical contractor',
-    openGraph: {
-      title: page?.title || 'Electrical Projects | CK Electric',
-      description: page?.seo?.opengraphDescription || page?.seo?.metaDesc || '',
-      type: 'website',
-      images: (page?.seo as any)?.opengraphImage?.mediaItemUrl
-        ? [{ url: (page?.seo as any).opengraphImage.mediaItemUrl, width: 1200, height: 630, alt: 'CK Electric Projects' }]
-        : page?.featuredImage?.node?.mediaItemUrl
-          ? [{ url: page?.featuredImage.node.mediaItemUrl, width: 1200, height: 630, alt: 'CK Electric Projects' }]
-          : [],
-    },
-  };
+  return buildMetadata(page?.seo as any, {
+    title: page?.title || 'Electrical Projects Portfolio | CK Electric',
+    description: fallbackDesc,
+    keywords: 'electrical projects, commercial electrical portfolio, industrial electrical, Puget Sound electrical contractor',
+    url: `${SITE_URL}/projects`,
+    image: page?.featuredImage?.node?.mediaItemUrl,
+  });
 }
 
 export default async function ProjectsPage() {

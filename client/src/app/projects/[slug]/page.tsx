@@ -4,6 +4,7 @@ import DetailView from '@/components/DetailView';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { GET_PROJECT_BY_SLUG, GET_ALL_PROJECTS } from '@/lib/wordpress-queries';
 import type { ProjectsResponse } from '@/lib/wordpress-types';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 
 interface ProjectNode {
   id: string;
@@ -73,43 +74,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       return { title: 'Project Not Found' };
     }
 
-    const seoTitle = project.seo?.title || project.title;
-    const seoDescription =
-      project.seo?.metaDesc ||
+    const fallbackDesc =
       project.projectFields?.mainContentSection?.substring(0, 160)?.replace(/<[^>]*>/g, '') ||
       `${project.title} — electrical project completed by CK Electric in ${project.projectFields?.specifications?.coverageArea || 'Puget Sound'}.`;
 
     return {
-      title: seoTitle,
-      description: seoDescription,
-      keywords: project.seo?.metaKeywords || '',
+      ...buildMetadata(project.seo, {
+        title: project.title,
+        description: fallbackDesc,
+        url: `${SITE_URL}/projects/${slug}`,
+        image: project.featuredImage?.node?.sourceUrl,
+        type: 'article',
+      }),
+      // Preserve extended robots directives
       robots: {
         index: project.seo?.metaRobotsNoindex !== 'noindex',
         follow: project.seo?.metaRobotsNofollow !== 'nofollow',
         'max-snippet': -1,
         'max-image-preview': 'large',
         'max-video-preview': -1,
-      },
-      alternates: {
-        canonical: project.seo?.canonical || `/projects/${slug}`,
-      },
-      openGraph: {
-        title: project.seo?.opengraphTitle || seoTitle,
-        description: project.seo?.opengraphDescription || seoDescription,
-        type: 'article',
-        url: project.seo?.opengraphUrl || `https://ck-electric.com/projects/${slug}`,
-        siteName: project.seo?.opengraphSiteName || 'CK Electric',
-        publishedTime: project.seo?.opengraphPublishedTime,
-        modifiedTime: project.seo?.opengraphModifiedTime,
-        images: project.featuredImage?.node?.sourceUrl
-          ? [{ url: project.featuredImage.node.sourceUrl, width: 1200, height: 630, alt: project.featuredImage.node.altText || project.title }]
-          : [],
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: project.seo?.opengraphTitle || seoTitle,
-        description: project.seo?.opengraphDescription || seoDescription,
-        images: project.featuredImage?.node?.sourceUrl ? [project.featuredImage.node.sourceUrl] : [],
       },
     };
   } catch {

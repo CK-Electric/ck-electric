@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import DetailView from '@/components/DetailView';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { GET_SERVICE_AREA, GET_SERVICE_AREAS, GET_LANDING_PAGE } from '@/lib/wordpress-queries';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 
 interface ServiceAreaNode {
   id: string;
@@ -73,23 +74,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     const locationName = serviceArea.servicesArea?.location || slug;
 
-    return {
-      title: serviceArea.seo?.title || `Electrical Services in ${locationName}`,
+    return buildMetadata(serviceArea.seo as any, {
+      title: `Electrical Services in ${locationName} | CK Electric`,
       description:
-        serviceArea.seo?.metaDesc ||
         serviceArea.servicesArea?.introduction ||
         `CK Electric provides professional electrical services in ${locationName}, WA. Licensed contractors for residential and commercial work.`,
-      keywords: serviceArea.seo?.metaKeywords || `electrician ${locationName}, electrical contractor ${locationName}, ${locationName} electrical services`,
-      alternates: {
-        canonical: serviceArea.seo?.canonical || `/service-areas/${slug}`,
-      },
-      openGraph: {
-        title: serviceArea.seo?.opengraphTitle || serviceArea.servicesArea?.location || slug,
-        description: serviceArea.seo?.metaDesc || serviceArea.servicesArea?.introduction || '',
-        siteName: serviceArea.seo?.opengraphSiteName || 'CK Electric',
-        type: 'website',
-      },
-    };
+      keywords: `electrician ${locationName}, electrical contractor ${locationName}, ${locationName} electrical services`,
+      url: `${SITE_URL}/service-areas/${slug}`,
+      image: serviceArea.featuredImage?.node?.mediaItemUrl,
+    });
   } catch {
     return {
       title: 'Service Area | CK Electric',

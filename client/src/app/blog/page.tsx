@@ -2,39 +2,21 @@ import { GET_BLOG_PAGE, GET_BLOGS, BlogsData } from '@/lib/wordpress-queries';
 import type { BlogPageData } from '@/lib/wordpress-types';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { Metadata } from 'next';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 import BlogPageContent from '@/components/BlogPageContent';
 
-// Generate metadata for the blog page - SSR
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    // Fetch blog page data from WordPress
-    const pageDataResponse = await fetchWordPressGraphQL<BlogPageData>(
-      GET_BLOG_PAGE
-    );
-
+    const pageDataResponse = await fetchWordPressGraphQL<BlogPageData>(GET_BLOG_PAGE);
     const pageData = pageDataResponse?.page;
 
-    // If no page data found, the blog posts will still work with fallbacks
-    if (!pageData) {
-      console.log("No blog page data found, using fallbacks");
-    }
-
-    const ogImage = (pageData?.seo as any)?.opengraphImage?.mediaItemUrl;
-    return {
+    return buildMetadata(pageData?.seo as any, {
       title: pageData?.title || 'Blog | CK Electric - Puget Sound',
-      description: pageData?.seo?.metaDesc || 'Electrical tips, industry insights, and project highlights from CK Electric professionals serving Puget Sound.',
-      keywords: pageData?.seo?.metaKeywords || 'electrical blog, electrical tips, electrical safety, electrical projects, Puget Sound electrical contractor',
-      openGraph: {
-        title: pageData?.title || 'Blog | CK Electric - Puget Sound',
-        description: pageData?.seo?.metaDesc || '',
-        type: 'website',
-        images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: 'CK Electric Blog' }] : [],
-      },
-      twitter: {
-        card: 'summary_large_image',
-        images: ogImage ? [ogImage] : [],
-      },
-    };
+      description: 'Electrical tips, industry insights, and project highlights from CK Electric professionals serving Puget Sound.',
+      keywords: 'electrical blog, electrical tips, electrical safety, electrical projects, Puget Sound electrical contractor',
+      url: `${SITE_URL}/blog`,
+      image: pageData?.featuredImage?.node?.mediaItemUrl,
+    });
   } catch (error) {
     console.error('Error generating blog metadata:', error);
     return {

@@ -4,6 +4,7 @@ import DetailView from '@/components/DetailView';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { GET_SERVICE_BY_SLUG, GET_ALL_SERVICES } from '@/lib/wordpress-queries';
 import { ServiceDetailResponse, ServicesResponse } from '@/lib/wordpress-types';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 
 function stripHtml(html: string | null | undefined): string {
   if (!html) return '';
@@ -31,19 +32,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ? `${service.title} in Puget Sound`
       : service.title;
 
-    return {
+    return buildMetadata(service.seo as any, {
       title,
-      description: service.seo?.metaDesc || `Professional ${service.title} services across Puget Sound. Licensed electricians serving Seattle, Tacoma, Bellevue, and surrounding areas.`,
-      keywords: service.seo?.metaKeywords || `${service.title}, electrical services, licensed electrician, Puget Sound`,
-      openGraph: {
-        title,
-        description: service.seo?.opengraphDescription || service.seo?.metaDesc || '',
-        type: 'website',
-        images: service.featuredImage?.node?.sourceUrl
-          ? [{ url: service.featuredImage.node.sourceUrl, width: 1200, height: 630, alt: service.title }]
-          : [],
-      },
-    };
+      description: `Professional ${service.title} services across Puget Sound. Licensed electricians serving Seattle, Tacoma, Bellevue, and surrounding areas.`,
+      keywords: `${service.title}, electrical services, licensed electrician, Puget Sound`,
+      url: `${SITE_URL}/services/${slug}`,
+      image: service.featuredImage?.node?.sourceUrl,
+    });
   } catch {
     return {
       title: 'Service | CK Electric',

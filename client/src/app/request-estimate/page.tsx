@@ -4,6 +4,7 @@ import HeroSection from '@/components/HeroSection';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { GET_REQUEST_ESTIMATE_PAGE } from '@/lib/wordpress-queries';
 import type { RequestEstimatePageData } from '@/lib/wordpress-types';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 
 function stripHtml(html: string | undefined): string {
   if (!html) return '';
@@ -14,15 +15,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const response = await fetchWordPressGraphQL<RequestEstimatePageData>(GET_REQUEST_ESTIMATE_PAGE);
   const page = response?.page;
 
-  return {
-    title: page?.title || 'Request a Free Estimate',
-    description:
-      page?.seo?.metaDesc ||
-      'Request a free estimate for electrical services from CK Electric. Professional electrical contractors serving Tacoma to Skagit Valley.',
-    keywords:
-      page?.seo?.metaKeywords ||
-      'free electrical estimate, electrical services quote, CK Electric estimate, electrical contractor Tacoma, electrical services Puget Sound',
-  };
+  return buildMetadata(page?.seo, {
+    title: page?.title || 'Request a Free Estimate | CK Electric',
+    description: 'Request a free estimate for electrical services from CK Electric. Professional electrical contractors serving Tacoma to Skagit Valley.',
+    keywords: 'free electrical estimate, electrical services quote, CK Electric estimate, electrical contractor Tacoma, electrical services Puget Sound',
+    url: `${SITE_URL}/request-estimate`,
+    image: page?.featuredImage?.node?.mediaItemUrl,
+  });
 }
 
 export default async function RequestEstimatePage() {

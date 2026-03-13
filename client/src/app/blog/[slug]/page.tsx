@@ -6,6 +6,7 @@ import CtaBox from '@/components/CtaBox';
 import RelatedArticles from '@/components/RelatedArticles';
 import { GET_BLOG_BY_SLUG, BlogDetailData, GET_BLOGS, BlogsData } from '@/lib/wordpress-queries';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
+import { buildMetadata, SITE_URL } from '@/lib/seo-utils';
 import { renderRichTextSSR } from '@/lib/render-rich-text';
 
 export async function generateStaticParams() {
@@ -25,23 +26,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       return { title: 'Article Not Found' };
     }
 
-    return {
-      title: blogData.seo?.title || blogData.title,
-      description:
-        blogData.seo?.metaDesc ||
-        'Electrical tips, industry insights, and project highlights from CK Electric professionals serving Puget Sound.',
-      keywords:
-        blogData.seo?.metaKeywords ||
-        'electrical blog, electrical tips, electrical safety, Puget Sound electrical contractor',
-      openGraph: {
-        title: blogData.seo?.opengraphTitle || blogData.seo?.title || blogData.title,
-        description: blogData.seo?.metaDesc || '',
-        type: 'article',
-        images: blogData.featuredImage?.node?.mediaItemUrl
-          ? [{ url: blogData.featuredImage.node.mediaItemUrl, width: 1200, height: 630, alt: blogData.title }]
-          : [],
-      },
-    };
+    return buildMetadata(blogData.seo as any, {
+      title: blogData.title,
+      description: 'Electrical tips, industry insights, and project highlights from CK Electric professionals serving Puget Sound.',
+      keywords: 'electrical blog, electrical tips, electrical safety, Puget Sound electrical contractor',
+      url: `${SITE_URL}/blog/${slug}`,
+      image: blogData.featuredImage?.node?.mediaItemUrl,
+      type: 'article',
+      publishedTime: blogData.date,
+    });
   } catch {
     return {
       title: 'Blog | CK Electric',
