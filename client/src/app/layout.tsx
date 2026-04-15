@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -121,11 +122,20 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://ckelectric.kinsta.cloud" crossOrigin="" />
         <link rel="preconnect" href="https://lh3.googleusercontent.com" crossOrigin="" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `var $wc_load=function(a){return JSON.parse(JSON.stringify(a))},$wc_leads=$wc_leads||{doc:{url:$wc_load(document.URL),ref:$wc_load(document.referrer),search:$wc_load(location.search),hash:$wc_load(location.hash)}};`,
+          }}
+        />
       </head>
       <body className={`${playfairDisplay.variable} ${inter.variable} antialiased`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        />
+        <Script
+          src="https://s.ksrndkehqnwntyxlhgto.com/165235.js"
+          strategy="afterInteractive"
         />
         <a
           href="#main-content"
