@@ -19,6 +19,7 @@ interface ServiceAreaNode {
   };
   servicesArea: {
     location: string;
+    pageTitle?: string;
     introduction?: string;
     content?: string;
     primaryCtaText?: string;
@@ -130,11 +131,13 @@ export default async function ServiceAreaPage({ params }: { params: Promise<{ sl
 
   return (
     <DetailView
-      title={serviceArea.servicesArea?.location || 'Service Area'}
+      title={serviceArea.servicesArea?.pageTitle || serviceArea.servicesArea?.location || 'Service Area'}
       subtitle={serviceArea.servicesArea?.introduction || 'Professional electrical services for this area.'}
       backgroundImage={serviceArea.featuredImage?.node?.mediaItemUrl || 'https://images.unsplash.com/photo-1603796826034-5910d5b6b2e?w=1920&h=1080&fit=crop'}
       primaryButtonText={serviceArea.servicesArea?.primaryCtaText || 'Get a Free Estimate'}
       primaryButtonHref={serviceArea.servicesArea?.primaryCtaLink || '/request-estimate'}
+      secondaryButtonText={serviceArea.servicesArea?.secondaryCtaText || undefined}
+      secondaryButtonHref={serviceArea.servicesArea?.secondaryCtaLink || undefined}
       contentTitle={`${serviceArea.servicesArea?.location} Electrical Services`}
       content={serviceArea.servicesArea?.content || '<p>Professional electrical services for this area.</p>'}
       specifications={specifications}

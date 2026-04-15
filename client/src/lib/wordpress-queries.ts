@@ -705,6 +705,7 @@ export const GET_SERVICE_AREA = `
         content
         introduction
         location
+        pageTitle
         primaryCtaLink
         primaryCtaText
         secondaryCtaLink

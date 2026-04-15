@@ -28,6 +28,8 @@ interface DetailViewProps {
   emailPlaceholder?: string;
   primaryButtonText?: string;
   primaryButtonHref?: string;
+  secondaryButtonText?: string;
+  secondaryButtonHref?: string;
 
   // Content Section Props
   contentTitle: string;
@@ -60,8 +62,10 @@ export default function DetailView({
   subtitle,
   backgroundImage,
   emailPlaceholder = "Enter your email for a free consult",
-  primaryButtonText = "Start Now",
+  primaryButtonText,
   primaryButtonHref = "#",
+  secondaryButtonText,
+  secondaryButtonHref = "#",
   contentTitle,
   content,
   specifications,
@@ -124,6 +128,16 @@ export default function DetailView({
                 <p className="text-neutral-200 text-medium font-normal max-w-lg">
                   {subtitle}
                 </p>
+                {(primaryButtonText || secondaryButtonText) && (
+                  <div className="flex flex-wrap gap-4 mt-2">
+                    {primaryButtonText && (
+                      <Button label={primaryButtonText} variant="primary" href={primaryButtonHref} />
+                    )}
+                    {secondaryButtonText && (
+                      <Button label={secondaryButtonText} variant="secondary" href={secondaryButtonHref} />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
