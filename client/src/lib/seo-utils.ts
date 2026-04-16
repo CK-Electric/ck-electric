@@ -62,12 +62,14 @@ export function buildMetadata(
   const title = seo?.title || fallbacks.title;
   const description = seo?.metaDesc || fallbacks.description;
   const keywords = seo?.metaKeywords || fallbacks.keywords;
-  const canonical = seo?.canonical || undefined;
+  // Always prefer the explicitly-constructed frontend URL over Yoast's canonical,
+  // which in a headless setup points to the WordPress/Kinsta backend domain.
+  const canonical = fallbacks.url || seo?.canonical || undefined;
 
   const ogTitle = seo?.opengraphTitle || title;
   const ogDescription = seo?.opengraphDescription || description;
   const ogImage = seo?.opengraphImage?.mediaItemUrl || fallbacks.image;
-  const ogUrl = seo?.opengraphUrl || seo?.canonical || fallbacks.url;
+  const ogUrl = fallbacks.url || seo?.opengraphUrl || seo?.canonical || undefined;
   const ogType = (seo?.opengraphType || fallbacks.type || 'website') as 'website' | 'article';
   const ogSiteName = seo?.opengraphSiteName || SITE_NAME;
 
