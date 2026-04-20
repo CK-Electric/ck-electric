@@ -130,7 +130,7 @@ export default function DetailView({
             >
               <div className="absolute inset-0 bg-primary-500/10 mix-blend-overlay"></div>
               <div className="relative z-10 flex flex-col gap-4 max-w-2xl">
-                <h1 className="text-neutral-50 text-display-2 leading-tight tracking-tight">
+                <h1 className="text-neutral-50 text-display-3 md:text-display-2 leading-tight tracking-tight">
                   {title}
                 </h1>
                 <p className="text-neutral-200 text-medium font-normal max-w-lg">
