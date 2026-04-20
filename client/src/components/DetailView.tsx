@@ -123,7 +123,7 @@ export default function DetailView({
         <div className="mx-auto max-w-[1200px]">
           <div className="@container">
             <div 
-              className="flex min-h-[520px] flex-col gap-6 bg-cover bg-center bg-no-repeat rounded-2xl items-start justify-center px-8 md:px-16 relative overflow-hidden group shadow-2xl"
+              className="flex min-h-[520px] flex-col gap-6 bg-cover bg-center bg-no-repeat rounded-2xl items-start justify-center px-8 md:px-16 py-16 md:py-20 relative overflow-hidden group shadow-2xl"
               style={{
                 backgroundImage: `linear-gradient(rgba(22, 16, 3, 0.7) 0%, rgba(22, 16, 3, 0.4) 100%), url('${backgroundImage}')`
               }}
