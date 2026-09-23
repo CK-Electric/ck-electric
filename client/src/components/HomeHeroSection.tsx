@@ -37,7 +37,7 @@ export default function HomeHeroSection({ landingPageData }: Props) {
         />
       </div>
 
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[minmax(0,1fr)_582px] gap-12 lg:gap-6 items-start">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[minmax(0,1fr)_582px] gap-12 lg:gap-8 items-start">
         <div className="min-w-0">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-positive-100 border border-positive-200 rounded-full text-small-upper text-positive-700 mb-8">
             <span className="flex h-2 w-2 shrink-0 rounded-full bg-positive-500 animate-pulse" aria-hidden="true"></span>
