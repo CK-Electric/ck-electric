@@ -8,6 +8,7 @@ interface Props {
 }
 
 export default function HomeAboutSection({ landingPageData }: Props) {
+  const eagleImageUrl = landingPageData?.page.landingPage.formImage?.node?.mediaItemUrl;
   const aboutUs = landingPageData?.page.landingPage.aboutUs;
   const aboutTitle = aboutUs?.title || 'NO MIDDLEMEN. NO MESS.';
   const aboutSubtitle = aboutUs?.subtitle || 'Locally Owned & Expertly Operated';
@@ -41,9 +42,22 @@ export default function HomeAboutSection({ landingPageData }: Props) {
 
           <div className="w-full md:w-1/2">
             <h2 className="text-primary-800 text-base-upper mb-4">{aboutTitle}</h2>
-            <h3 className="about-title text-neutral-950 mb-8 leading-tight">
-              {aboutSubtitle}
-            </h3>
+            <div className="flex items-center gap-4 mb-8">
+              <h3 className="about-title text-neutral-950 min-w-0 flex-1 leading-tight">
+                {aboutSubtitle}
+              </h3>
+              {eagleImageUrl && (
+                <Image
+                  src={eagleImageUrl}
+                  alt=""
+                  aria-hidden="true"
+                  width={112}
+                  height={128}
+                  sizes="(max-width: 640px) 72px, 112px"
+                  className="w-18 sm:w-28 h-auto shrink-0 object-contain"
+                />
+              )}
+            </div>
 
             <div
               className="space-y-6 text-neutral-700 text-base leading-relaxed"

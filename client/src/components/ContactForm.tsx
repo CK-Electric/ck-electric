@@ -1,9 +1,5 @@
-'use client';
-
-import { useState } from 'react';
-import { Facebook, LinkedIn, Star, CheckCircle, Phone, Mail, LocationOn, AccessTime } from '@mui/icons-material';
-import Input from '@/components/Input';
-import Button from '@/components/Button';
+import { Facebook, CheckCircle, Phone, Mail, LocationOn, AccessTime } from '@mui/icons-material';
+import HousecallProLeadForm from '@/components/HousecallProLeadForm';
 import SocialLinks from '@/components/SocialLinks';
 
 interface ContactFormProps {
@@ -38,55 +34,6 @@ interface ContactFormProps {
 }
 
 export default function ContactForm({ pageData }: ContactFormProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: 'General Inquiry',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('');
-  const [statusType, setStatusType] = useState<'success' | 'error'>('success');
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setStatusMessage('');
-
-    const encode = (data: Record<string, string>) =>
-      Object.keys(data)
-        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
-        .join('&');
-
-    try {
-      const response = await fetch('/contact-form.html', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encode({ 'form-name': 'contact', ...formData }),
-      });
-
-      if (response.ok) {
-        setStatusMessage("Thank you! We'll get back to you within 24 hours.");
-        setStatusType('success');
-        setFormData({ name: '', email: '', phone: '', subject: 'General Inquiry', message: '' });
-      } else {
-        setStatusMessage('Failed to send message. Please try again.');
-        setStatusType('error');
-      }
-    } catch (error) {
-      setStatusMessage('An unexpected error occurred. Please try again later.');
-      setStatusType('error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const socialLinks = [
     ...(pageData?.contactInformation?.facebookLink
       ? [{ icon: <Facebook className="text-xl" />, href: pageData.contactInformation.facebookLink, label: "Facebook" }]
@@ -98,9 +45,9 @@ export default function ContactForm({ pageData }: ContactFormProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="bg-white p-8 md:p-12 rounded-3xl shadow-2xl border border-neutral-200">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_502px] gap-12">
                 {/* Left: Contact Information */}
                 <div className="bg-primary-50 p-8 rounded-2xl border border-primary-500/20 space-y-10">
                   <div>
@@ -165,82 +112,8 @@ export default function ContactForm({ pageData }: ContactFormProps) {
                 </div>
                 
                 {/* Right: Contact Form */}
-                <div>
-                  <form className="grid grid-cols-1 md:grid-cols-2 gap-6" name="contact" data-netlify="true" onSubmit={handleSubmit}>
-                    <input type="hidden" name="form-name" value="contact" />
-                    <Input
-                      label="Full Name"
-                      name="name"
-                      placeholder="Enter your name"
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                    />
-                    <Input
-                      label="Email Address"
-                      name="email"
-                      placeholder="email@example.com"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                    />
-                    <Input
-                      label="Phone Number"
-                      name="phone"
-                      placeholder="(555) 000-0000"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleChange}
-                    />
-                    <div className="space-y-2">
-                      <label htmlFor="subject" className="text-base-bold text-neutral-950">
-                        Subject
-                      </label>
-                      <select
-                        id="subject"
-                        name="subject"
-                        className="w-full bg-primary-50 border-transparent focus:border-primary-500 focus:ring-0 text-neutral-950 text-sm p-4 rounded-xl"
-                        value={formData.subject}
-                        onChange={handleChange}
-                      >
-                        <option value="General Inquiry">General Inquiry</option>
-                        <option value="Employment">Employment</option>
-                        <option value="Service Request">Service Request</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                    <div className="md:col-span-2 space-y-2">
-                      <label htmlFor="message" className="text-base-bold text-neutral-950">
-                        Message
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={5}
-                        placeholder="How can we help you?"
-                        className="w-full bg-primary-50 border-transparent focus:border-primary-500 focus:ring-0 text-neutral-950 text-sm p-4 rounded-xl resize-none"
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                    <div className="md:col-span-2 mt-4">
-                      <Button
-                        label={isSubmitting ? "Sending..." : "Send Message"}
-                        variant="primary"
-                        type="submit"
-                        className="w-full"
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                  </form>
-                  {statusMessage && (
-                    <div className={`mt-4 p-4 rounded-lg ${statusType === 'success' ? 'bg-positive-100 text-positive-700' : 'bg-negative-100 text-negative-700'}`}>
-                      {statusMessage}
-                    </div>
-                  )}
+                <div className="min-w-0">
+                  <HousecallProLeadForm />
                 </div>
               </div>
             </div>

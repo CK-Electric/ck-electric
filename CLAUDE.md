@@ -21,7 +21,7 @@ The frontend is deployed on Netlify. The CMS is a headless WordPress instance ac
 | Tailwind CSS | v4 | CSS-first config via `@theme inline` |
 | Material-UI | Latest | Icons + MUI components only |
 | Fonts | — | Inter (body), Playfair Display (headings) |
-| Forms | — | Netlify Forms |
+| Forms | — | Housecall Pro lead capture |
 | CMS | — | WordPress via WPGraphQL |
 
 ---
@@ -178,12 +178,13 @@ export default async function Page({ params }) {
 
 ## Forms
 
-Forms submit to Netlify Forms. Three form names: `contact`, `estimate`, `estimate-request`.
+All three submission locations (home, contact, and request-estimate) use the shared
+`components/HousecallProLeadForm.tsx` embed. Submissions are handled by Housecall Pro.
 
-- Static HTML detection files are in `public/` (required for Netlify to detect forms at build time)
-- Form components are Client Components (`'use client'`) that manage state with `useState`
-- Submit via `fetch` to the corresponding static HTML file URL
-- Validate with `lib/form-validation.ts`
+- Keep the supplied organization/token URLs together in the shared component.
+- Render only one lead iframe per page; the vendor expects `hcp-lead-iframe`.
+- The component handles iframe resizing on client-side navigation, because the vendor script initializes its lead-form listener on window load.
+- No Netlify Forms detection files or submission handlers are needed.
 
 ---
 

@@ -22,7 +22,6 @@ export default function HomeHeroSection({ landingPageData }: Props) {
   const feature1Description = lp?.landingPage.heroItems.feature1.description1 || 'Full Compliance Guaranteed';
   const feature2Title = lp?.landingPage.heroItems.item2.title || 'FAST RESPONSE';
   const feature2Description = lp?.landingPage.heroItems.item2.description || 'Same-day Estimates Available';
-  const formImageUrl = lp?.landingPage.formImage?.node?.mediaItemUrl;
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-32">
@@ -38,14 +37,14 @@ export default function HomeHeroSection({ landingPageData }: Props) {
         />
       </div>
 
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-7">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[minmax(0,1fr)_582px] gap-12 lg:gap-6 items-start">
+        <div className="min-w-0">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-positive-100 border border-positive-200 rounded-full text-small-upper text-positive-700 mb-8">
-            <span className="flex h-2 w-2 rounded-full bg-positive-500 animate-pulse" aria-hidden="true"></span>
+            <span className="flex h-2 w-2 shrink-0 rounded-full bg-positive-500 animate-pulse" aria-hidden="true"></span>
             {tag}
           </div>
 
-          <h1 className="hero-title text-neutral-950 leading-[0.9] mb-8 tracking-tighter font-bold">
+          <h1 className="hero-title home-hero-title text-neutral-950 leading-[0.9] mb-8 tracking-tighter font-bold">
             {heroTitle.split(' ').map((word, index) =>
               index === 0 ? (
                 <span key={index}>
@@ -81,25 +80,8 @@ export default function HomeHeroSection({ landingPageData }: Props) {
           </div>
         </div>
 
-        <div className="lg:col-span-5 relative">
-          <div className="relative z-10 bg-white p-10 shadow-2xl">
-            <div className="flex items-center justify-between gap-4 mb-8">
-              <div>
-                <h2 className="text-display-3 text-neutral-950">Get a Free Estimate</h2>
-                <p className="text-neutral-700 text-small">Professional service within 24 hours.</p>
-              </div>
-              {formImageUrl && (
-                <Image
-                  src={formImageUrl}
-                  alt=""
-                  aria-hidden="true"
-                  className="w-16 h-16 object-contain flex-shrink-0"
-                  width={64}
-                  height={64}
-                  sizes="64px"
-                />
-              )}
-            </div>
+        <div className="min-w-0 relative">
+          <div className="relative z-10 bg-white p-4 sm:p-10 shadow-2xl">
             <EstimateForm />
           </div>
         </div>

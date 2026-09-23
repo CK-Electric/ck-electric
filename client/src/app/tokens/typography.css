@@ -307,3 +307,8 @@
     letter-spacing: var(--font-display-2-letter-spacing) !important;
   }
 }
+
+/* Compact homepage heading alongside the lead form. */
+.home-hero-title {
+  --font-display-1-size: 80px;
+}
