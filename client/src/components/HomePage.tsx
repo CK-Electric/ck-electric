@@ -1,5 +1,6 @@
 import HomeHeroSection from './HomeHeroSection';
 import HomeStatsSection from './HomeStatsSection';
+import HomeAwardSection from './HomeAwardSection';
 import HomeAboutSection from './HomeAboutSection';
 import HomeServicesSection from './HomeServicesSection';
 import HomeServiceAreasSection from './HomeServiceAreasSection';
@@ -43,6 +44,7 @@ export default function HomePage({
     <div className="bg-primary-50">
       <HomeHeroSection landingPageData={landingPageData} />
       <HomeStatsSection landingPageData={landingPageData} />
+      <HomeAwardSection />
       <HomeAboutSection landingPageData={landingPageData} />
       <HomeServicesSection servicesData={servicesData} />
       <HomeServiceAreasSection serviceAreasData={serviceAreasData} contactPhone={contactPhone} />

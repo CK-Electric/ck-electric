@@ -4,6 +4,7 @@ import Image from 'next/image';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import DetailView from '@/components/DetailView';
 import Button from '@/components/Button';
+import HomeAwardSection from '@/components/HomeAwardSection';
 import HomeTestimonialsSection from '@/components/HomeTestimonialsSection';
 import { fetchWordPressGraphQL } from '@/lib/wordpress-ssr';
 import { GET_SERVICE_AREA, GET_SERVICE_AREAS, GET_LANDING_PAGE, GET_TESTIMONIALS } from '@/lib/wordpress-queries';
@@ -182,6 +183,8 @@ export default async function ServiceAreaPage({ params }: { params: Promise<{ sl
 
   const afterHeroSlot = (
     <>
+      <HomeAwardSection />
+
       {/* Intro Section — dark noche background */}
       {introSection?.title && (
         <section className="relative bg-neutral-950 overflow-hidden py-20 px-2 md:px-4 lg:px-10">
