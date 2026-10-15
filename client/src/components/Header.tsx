@@ -282,24 +282,6 @@ export default function Header({ serviceArea, slogan, contactEmail, contactPhone
         </>
       )}
 
-      {/* Mobile Call Button Bubble */}
-      <div className="lg:hidden fixed bottom-6 right-6 z-40">
-        <a
-          href={`tel:${contactPhone}`}
-          className="flex items-center justify-center w-14 h-14 bg-primary-500 rounded-full shadow-lg hover:bg-primary-600 transition-colors relative group"
-          aria-label={`Call now at ${contactPhone}`}
-        >
-          <PhoneIcon 
-            sx={{ 
-              color: 'rgb(38, 38, 38)', 
-              fontSize: '24px'
-            }} 
-          />
-          <span className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-neutral-950 text-white text-small rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-            Call Now
-          </span>
-        </a>
-      </div>
     </nav>
   );
 }
