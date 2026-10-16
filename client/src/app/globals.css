@@ -70,3 +70,9 @@ body {
 .animate-pulse-subtle {
   animation: pulse-subtle 3s ease-in-out infinite;
 }
+/* Enlarge only Housecall Pro's collapsed launcher; leave the chat panel unscaled. */
+#proChatIframeContainer[style*="width:110px"],
+#proChatIframeContainer[style*="width: 110px"] {
+  transform: scale(1.15);
+  transform-origin: bottom right;
+}
