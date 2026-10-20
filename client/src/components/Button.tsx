@@ -3,6 +3,7 @@ import React from 'react';
 interface ButtonProps {
   label: string;
   icon?: React.ReactNode;
+  iconPosition?: 'start' | 'end';
   variant?: 'primary' | 'secondary' | 'tertiary';
   onClick?: () => void;
   href?: string;
@@ -16,6 +17,7 @@ interface ButtonProps {
 export default function Button({
   label,
   icon,
+  iconPosition = 'end',
   variant = 'primary',
   onClick,
   href,
@@ -48,7 +50,7 @@ export default function Button({
           className={`${variantClasses[variant]} ${className}`}
           aria-label={ariaLabel}
         >
-          <span className="inline-flex items-center">
+          <span className={`inline-flex items-center ${iconPosition === 'start' ? 'flex-row-reverse gap-2' : ''}`}>
             {label}
             {labelSuffix && (
               <span className="sr-only">
@@ -56,7 +58,7 @@ export default function Button({
               </span>
             )}
             {icon && (
-              <span className=" ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true">
+              <span className={`inline-flex transition-transform ${iconPosition === 'start' ? 'group-hover:-translate-x-1' : 'ml-2 group-hover:translate-x-1'}`} aria-hidden="true">
                 {icon}
               </span>
             )}
@@ -98,7 +100,7 @@ export default function Button({
         aria-label={ariaLabel}
         disabled={disabled}
       >
-        <span className="inline-flex items-center">
+        <span className={`inline-flex items-center ${iconPosition === 'start' ? 'flex-row-reverse gap-2' : ''}`}>
           {label}
           {labelSuffix && (
             <span className="sr-only">
@@ -106,7 +108,7 @@ export default function Button({
             </span>
           )}
           {icon && (
-            <span className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true">
+            <span className={`inline-flex transition-transform ${iconPosition === 'start' ? 'group-hover:-translate-x-1' : 'ml-2 group-hover:translate-x-1'}`} aria-hidden="true">
               {icon}
             </span>
           )}

@@ -31,7 +31,7 @@ export default function EstimateDatePicker({ value, days, unavailable, onChange,
       if (event.key === 'Escape' && details.current) { details.current.open = false; summary.current?.focus(); }
     }}>
       <summary ref={summary} aria-label={`${label}: ${value ? friendlyDate(value) : 'Choose a date'}`} className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-4 py-3 text-base focus-visible:outline-2 focus-visible:outline-primary-500 [&::-webkit-details-marker]:hidden">
-        <span className={value ? 'text-neutral-950' : 'text-neutral-500'}>{value ? friendlyDate(value) : 'Choose a date'}</span><CalendarMonthOutlined className="text-primary-800" fontSize="small" />
+        <span className={value ? 'text-neutral-950' : 'text-neutral-700'}>{value ? friendlyDate(value) : 'Choose a date'}</span><CalendarMonthOutlined className="text-primary-800" fontSize="small" />
       </summary>
       <div role="group" aria-label={`${label} calendar`} className="border-t border-neutral-200 p-3 sm:p-4">
         <div className="mb-3 flex items-center justify-between gap-2">
@@ -40,7 +40,7 @@ export default function EstimateDatePicker({ value, days, unavailable, onChange,
           <button type="button" aria-label="Next month" disabled={monthIndex === months.length - 1} onClick={() => setMonthIndex(monthIndex + 1)} className="rounded p-2 hover:bg-primary-50 disabled:opacity-30"><ChevronRight fontSize="small" /></button>
         </div>
         <div className="grid grid-cols-7 text-center text-small">
-          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => <span key={`day-${i}`} aria-hidden="true" className="py-2 text-neutral-500">{day}</span>)}
+          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => <span key={`day-${i}`} aria-hidden="true" className="py-2 text-neutral-700">{day}</span>)}
           {Array.from({ length: first.getUTCDay() }, (_, i) => <span key={`blank-${i}`} />)}
           {Array.from({ length: count }, (_, i) => {
             const date = `${month}-${String(i + 1).padStart(2, '0')}`;
@@ -49,7 +49,7 @@ export default function EstimateDatePicker({ value, days, unavailable, onChange,
             }} className={`min-h-11 rounded-md transition-colors focus-visible:outline-2 focus-visible:outline-primary-700 disabled:cursor-not-allowed disabled:text-neutral-300 ${date === value ? 'bg-primary-500 text-neutral-950 font-bold' : 'enabled:hover:bg-primary-50'}`}>{i + 1}</button>;
           })}
         </div>
-        <p className="mt-3 text-small text-neutral-500">Weekdays only · Pacific time</p>
+        <p className="mt-3 text-small text-neutral-700">Weekdays only · Pacific time</p>
       </div>
     </details>
   </div>;

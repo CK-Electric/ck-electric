@@ -13,7 +13,7 @@ async function forward(request: NextRequest, method: 'GET' | 'POST') {
   if (method === 'POST' && origin !== request.nextUrl.origin) {
     return NextResponse.json({ message: 'Invalid request origin.' }, { status: 403 });
   }
-  if (!base || !token || new URL(base).hostname !== 'ck-electric.local') {
+  if (!base || !token || !['ck-electric.local', 'ckelectric-1.local'].includes(new URL(base).hostname)) {
     return NextResponse.json({ message: 'Local WordPress integration is not configured.' }, { status: 503 });
   }
   if (Number(request.headers.get('content-length') || 0) > 32 * 1024 * 1024) {

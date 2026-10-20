@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useId, useRef, useState } from 'react';
 import ArrowBack from '@mui/icons-material/ArrowBack';
+import ElectricalServicesOutlined from '@mui/icons-material/ElectricalServicesOutlined';
+import CalendarMonthOutlined from '@mui/icons-material/CalendarMonthOutlined';
+import UploadFileOutlined from '@mui/icons-material/UploadFileOutlined';
+import ImageOutlined from '@mui/icons-material/ImageOutlined';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import EstimateDatePicker, { friendlyDate, friendlyTime } from './EstimateDatePicker';
@@ -23,6 +26,7 @@ function dateOptions() {
   return days;
 }
 function Photo({ label, file, onChange, required = true, maxBytes }: { label: string; file?: File; onChange: (file?: File) => void; required?: boolean; maxBytes: number }) {
+  const id = useId();
   const imageRef = useRef<HTMLImageElement>(null);
   const previewable = !!file && ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
   const [error, setError] = useState('');
@@ -32,25 +36,54 @@ function Photo({ label, file, onChange, required = true, maxBytes }: { label: st
     const objectUrl = URL.createObjectURL(file); imageRef.current.src = objectUrl;
     return () => URL.revokeObjectURL(objectUrl);
   }, [file]);
-  return <div className="rounded border border-neutral-200 p-4">
-    <label className="text-small-bold">{label}{required ? ' *' : ' (optional)'}
-      <input ref={ref} className={`${inputClass} text-small`} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" onChange={event => {
-        const next = event.target.files?.[0]; setError('');
-        if (next && (!/\.(jpe?g|png|webp|heic|heif)$/i.test(next.name) || next.size > maxBytes)) {
-          setError(`Choose a JPG, PNG, WEBP or HEIC image up to ${(maxBytes / 1024 / 1024).toFixed(1)} MB.`); event.target.value = ''; onChange(undefined); return;
-        }
-        onChange(next);
-      }} />
-    </label>
-    {file && <div className="mt-3 space-y-2">
+  return <div className="rounded-xl border border-neutral-200 p-4 sm:p-5">
+    <p id={id} className="text-small-bold">{label}{required ? ' *' : ' (optional)'}</p>
+    <input ref={ref} className="hidden" tabIndex={-1} aria-labelledby={id} type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" onChange={event => {
+      const next = event.target.files?.[0];
+      if (!next) return;
+      setError('');
+      if (!/\.(jpe?g|png|webp|heic|heif)$/i.test(next.name) || next.size > maxBytes) {
+        setError(`Choose a JPG, PNG, WEBP or HEIC image up to ${(maxBytes / 1024 / 1024).toFixed(1)} MB.`);
+        event.target.value = ''; return;
+      }
+      onChange(next);
+    }} />
+    {!file ? <button type="button" aria-label={`Choose photo: ${label}`} aria-describedby={`${id}-help`} onClick={() => ref.current?.click()} className="mt-4 flex min-h-48 w-full cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 px-4 py-6 text-center transition-colors hover:border-primary-500 hover:bg-primary-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-700">
+      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-primary-800"><UploadFileOutlined aria-hidden="true" /></span>
+      <span className="rounded-md bg-primary-500 px-5 py-2 text-small-bold text-neutral-950">Choose photo</span>
+      <span className="text-small text-neutral-700">Click or tap anywhere here to select a photo.</span>
+      <span id={`${id}-help`} className="text-small text-neutral-700">JPG, PNG, WEBP or HEIC · Up to {(maxBytes / 1024 / 1024).toFixed(1)} MB</span>
+    </button> : <div className="mt-4 space-y-3">
+      <p role="status" className="flex items-center gap-2 text-small-bold text-neutral-800"><CheckCircleOutline fontSize="small" className="text-positive-700" aria-hidden="true" />Photo selected</p>
       {/* Local object URLs intentionally bypass the remote image optimizer. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      {previewable && <img ref={imageRef} alt={label} className="h-32 w-full rounded object-contain" />}
-      <p className="text-small break-all">{file.name} ({(file.size / 1024 / 1024).toFixed(1)} MB){!previewable && ' — preview unavailable for this format'}</p>
-      <button type="button" className="text-small underline" onClick={() => { onChange(undefined); if (ref.current) ref.current.value = ''; }}>Remove photo</button>
+      {previewable ? <img ref={imageRef} alt={label} className="h-40 w-full rounded-lg bg-neutral-50 object-contain" /> : <div className="flex items-center gap-3 rounded-lg bg-neutral-50 p-4 text-small text-neutral-700"><ImageOutlined aria-hidden="true" />Preview unavailable for this format. Your photo is selected.</div>}
+      <p className="text-small break-all">{file.name} ({(file.size / 1024 / 1024).toFixed(1)} MB)</p>
+      <div className="flex flex-wrap gap-4">
+        <button type="button" aria-label={`Replace photo: ${label}`} className="min-h-11 cursor-pointer text-small-bold underline underline-offset-4" onClick={() => ref.current?.click()}>Replace photo</button>
+        <button type="button" aria-label={`Remove photo: ${label}`} className="min-h-11 cursor-pointer text-small text-neutral-700 underline underline-offset-4" onClick={() => { onChange(undefined); setError(''); if (ref.current) ref.current.value = ''; }}>Remove photo</button>
+      </div>
     </div>}
-    {error && <p role="alert" className="mt-2 text-small text-negative-700">{error}</p>}
+    {error && <p role="alert" className="mt-3 text-small text-negative-700">{error}</p>}
   </div>;
+}
+
+function ReviewPhoto({ file }: { file: File }) {
+  const ref = useRef<HTMLImageElement>(null);
+  const previewable = ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
+  useEffect(() => {
+    if (!previewable || !ref.current) return;
+    const url = URL.createObjectURL(file);
+    ref.current.src = url;
+    return () => URL.revokeObjectURL(url);
+  }, [file, previewable]);
+  return <li className="flex min-w-0 items-center gap-3 rounded-lg border border-neutral-200 bg-white p-3">
+    {previewable ? (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img ref={ref} alt="" className="h-14 w-14 shrink-0 rounded-md object-cover" />
+    ) : <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-neutral-100"><ImageOutlined aria-hidden="true" /></span>}
+    <span className="min-w-0 break-words text-small">{file.name}</span>
+  </li>;
 }
 export default function ServiceEstimatePreview({ kind, hostedDemo = false }: { kind: Kind; hostedDemo?: boolean }) {
   const [step, setStep] = useState(0);
@@ -86,7 +119,7 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false }: { k
   function set(key: string, value: string) { edited(); setValues(old => ({ ...old, [key]: value })); setError(''); }
   function move(next: number) { setStep(next); setError(''); requestAnimationFrame(() => heading.current?.focus()); }
   function choice(key: string, label: string, options: string[][]) {
-    return <fieldset><legend className="text-base-bold mb-3">{label} *</legend><div className="flex flex-wrap gap-3">{options.map(([value, text]) => <label key={value} className={`flex min-h-14 flex-1 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 text-base transition-colors hover:border-primary-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-500 ${values[key] === value ? 'border-primary-500 bg-primary-50' : 'border-neutral-300 bg-white'}`}><input type="radio" name={key} value={value} checked={values[key] === value} required onChange={() => set(key, value)} className="accent-primary-500" />{text}</label>)}</div></fieldset>;
+    return <fieldset><legend className="text-base-bold mb-3">{label} *</legend><div className="flex flex-col gap-3">{options.map(([value, text]) => <label key={value} className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 text-base transition-colors hover:border-primary-500 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-500 ${values[key] === value ? 'border-primary-500 bg-primary-50 ring-1 ring-primary-500' : 'border-neutral-300 bg-white'}`}><input type="radio" name={key} value={value} checked={values[key] === value} required onChange={() => set(key, value)} className="accent-primary-500" />{text}</label>)}</div></fieldset>;
   }
   function field(key: string, label: string, type = 'text', required = true, autoComplete?: string) {
     return <label className="block text-small-bold">{label}{required ? ' *' : ' (optional)'}<input className={inputClass} type={type} required={required} autoComplete={autoComplete} value={values[key] || ''} maxLength={key === 'state' ? 2 : 150} onChange={e => set(key, e.target.value)} /></label>;
@@ -145,15 +178,17 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false }: { k
   const title = ev ? 'EV charger installation' : 'Panel replacement';
   return <div className="bg-neutral-50 px-4 py-8 md:py-12 text-neutral-950">
     <div className="mx-auto max-w-3xl">
-      <Link href="/request-estimate" className="mb-8 inline-flex items-center gap-2 text-small-bold text-neutral-600 transition-colors hover:text-neutral-950"><ArrowBack fontSize="small" /> Back</Link>
+      <Button href="/request-estimate" variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back" className="mb-8 min-h-11" />
       <p className="text-small-upper text-primary-800 mb-3">Request a free estimate</p>
       <h1 className="text-display-3 md:text-display-2 mb-4">{title}</h1>
       <p className="text-base text-neutral-600 mb-8">A few details help us understand your project and prepare the next steps. No commitment required.</p>
       <section className="rounded-2xl border border-neutral-200 bg-white p-5 md:p-10 shadow-sm">
-        {reference ? <div role="status" className="space-y-5 py-4"><CheckCircleOutline className="text-positive-600" fontSize="large" /><h2 ref={heading} tabIndex={-1} className="text-display-4">{hostedDemo ? 'Preview complete' : 'Your request is saved'}</h2><p className="text-base text-neutral-600">{hostedDemo ? 'Thank you for reviewing the form. This is a demonstration: your answers and photos have not been submitted or saved.' : 'Your project details and any photos have been saved. A price or appointment has not been confirmed.'}</p><p className="text-small break-all">Reference: <strong>{reference}</strong></p><Button variant="secondary" label="Back to my answers" onClick={() => setReference('')} /></div> : <>
-          <ol className="mb-8 grid grid-cols-3 gap-2 text-small" aria-label="Progress">{['Project', needsPhotos ? 'Photos' : 'Visit preferences', 'Contact & review'].map((label, i) => <li key={i} aria-current={step === i ? 'step' : undefined} className={`border-t-4 pt-3 ${i <= step ? 'border-primary-500 text-neutral-950' : 'border-neutral-200 text-neutral-500'}`}>{i + 1}. {label}</li>)}</ol>
-          <h2 ref={heading} tabIndex={-1} className="text-display-4 mb-6">{['About your project', needsPhotos ? 'Project photos' : 'Preferred visit times', 'Your contact details'][step]}</h2>
-          <p className="mb-6 text-small text-neutral-500">Fields marked * are required.</p>
+        {reference ? <div role="status" className="space-y-5 py-4"><CheckCircleOutline className="text-positive-600" fontSize="large" /><h2 ref={heading} tabIndex={-1} className="text-display-4">{hostedDemo ? 'Preview complete' : 'Your request is saved'}</h2><p className="text-base text-neutral-600">{hostedDemo ? 'Thank you for reviewing the form. This is a demonstration: your answers and photos have not been submitted or saved.' : 'Your project details and any photos have been saved. A price or appointment has not been confirmed.'}</p><p className="text-small break-all">Reference: <strong>{reference}</strong></p><Button variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back to my answers" onClick={() => setReference('')} /></div> : <>
+          <ol className="mb-8 grid grid-cols-3 gap-2 text-small" aria-label="Progress">{['Project', needsPhotos ? 'Photos' : 'Visit preferences', 'Contact & review'].map((label, i) => <li key={i} aria-current={step === i ? 'step' : undefined} className={`border-t-4 pt-3 ${i <= step ? 'border-primary-500 text-neutral-950' : 'border-neutral-200 text-neutral-700'}`}><span className="mb-2 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-small-bold" aria-hidden="true">{i < step ? <CheckCircleOutline fontSize="small" className="text-primary-800" /> : i + 1}</span>{label}</li>)}</ol>
+          <p className="mb-2 text-small-bold text-primary-800">Step {step + 1} of 3</p>
+          <h2 ref={heading} tabIndex={-1} className="text-display-4 mb-3">{['About your project', needsPhotos ? 'Project photos' : 'Preferred visit times', 'Your contact details'][step]}</h2>
+          <p className="mb-2 text-small text-neutral-700">{step === 0 ? "Let’s start with what you have in mind." : step === 1 ? (needsPhotos ? "A couple of clear photos help us understand your setup." : "Let us know which days and times work best for you.") : "You’re almost there. Add your details and review your project."}</p>
+          <p className="mb-6 text-small text-neutral-700">Fields marked * are required.</p>
           <form ref={form} onSubmit={e => { e.preventDefault(); void advance(); }} className="space-y-8">
             {step === 0 && <>
               {ev ? <>
@@ -176,10 +211,10 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false }: { k
               <p className="text-small">Choose three different weekdays within the next six weeks, between 6 a.m. and 2 p.m. Pacific time. These are preferences, not confirmed bookings.</p>
               {[0, 1, 2].map(i => <fieldset key={i} className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 sm:p-5"><legend className="px-2 text-small-bold text-primary-800">{['First preference', 'Second preference', 'Third preference'][i]}</legend>
                 <EstimateDatePicker label={`Preference ${i + 1}`} value={values[`date${i}`] || ''} days={days} unavailable={[0, 1, 2].filter(n => n !== i).map(n => values[`date${n}`])} onChange={date => set(`date${i}`, date)} />
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">{['from', 'to'].map(key => <label key={key} className="min-w-0 text-small-bold">{key === 'from' ? 'From' : 'Until'} *<span className="relative block"><select required className={selectClass} value={values[`${key}${i}`] || ''} onChange={e => {
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">{['from', 'to'].map(key => <label key={key} className="min-w-0 text-small-bold">{key === 'from' ? 'From' : 'Until'} *<span className="relative block"><select required disabled={key === 'to' && !values[`from${i}`]} className={`${selectClass} disabled:cursor-not-allowed disabled:bg-neutral-100`} value={values[`${key}${i}`] || ''} onChange={e => {
                   set(`${key}${i}`, e.target.value);
                   if (key === 'from' && values[`to${i}`] <= e.target.value) set(`to${i}`, '');
-                }}><option value="">Select time</option>{(key === 'from' ? times.slice(0, -1) : times.slice(1).filter(time => !values[`from${i}`] || time > values[`from${i}`])).map(time => <option key={time} value={time}>{friendlyTime(time)}</option>)}</select><SelectArrow /></span></label>)}</div>
+                }}><option value="">{key === 'to' && !values[`from${i}`] ? 'Choose a start time first' : 'Select time'}</option>{(key === 'from' ? times.slice(0, -1) : times.slice(1)).map(time => <option key={time} value={time} disabled={key === 'to' && (!values[`from${i}`] || time <= values[`from${i}`])}>{friendlyTime(time)}</option>)}</select><SelectArrow /></span></label>)}</div>
               </fieldset>)}
             </>)}
             {step === 2 && <>
@@ -187,12 +222,40 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false }: { k
               {field('street', 'Project street address', 'text', true, 'address-line1')}{field('unit', 'Unit / suite', 'text', false, 'address-line2')}
               <div className="grid gap-5 sm:grid-cols-3">{field('city', 'City', 'text', true, 'address-level2')}{field('state', 'State', 'text', true, 'address-level1')}{field('zip', 'ZIP code', 'text', true, 'postal-code')}</div>
               <label className="block text-small-bold">Additional comments (optional)<textarea className={inputClass} rows={4} maxLength={2000} value={values.comments || ''} onChange={e => set('comments', e.target.value)} /></label>
-              <div className="rounded bg-neutral-50 p-4 text-small space-y-2"><h3 className="text-base-bold">Review your project</h3><p>{title} · {values.location}</p>{ev ? <><p>{values.charger === 'hardwired' ? 'Hardwired charger' : 'NEMA 14-50 receptacle'}{values.charger === 'hardwired' && ` · Providing charger: ${values.supply}`}</p><p>Within 10 feet: {values.distance === 'unsure' ? 'Not sure' : values.distance === 'yes' ? 'Yes' : 'No'}</p></> : <><p>{count} {count === 1 ? 'panel' : 'panels'}</p>{Array.from({ length: count }, (_, i) => <p key={i}>Panel {i + 1}: {values.known !== 'yes' ? 'Amperage unknown' : `${values[`amps${i}`] === 'other' ? values[`other${i}`] : values[`amps${i}`]} amps`}</p>)}</>}{needsPhotos ? <ul>{activePhotoKeys.filter(key => photos[key]).map(key => <li className="break-all" key={key}>{photos[key]?.name}</li>)}</ul> : [0, 1, 2].map(i => <p key={i}>{friendlyDate(values[`date${i}`])} · {friendlyTime(values[`from${i}`])}–{friendlyTime(values[`to${i}`])} Pacific</p>)}</div>
+              <section aria-labelledby="project-review-heading" className="overflow-hidden rounded-2xl border border-neutral-200">
+                <div className="flex items-center gap-4 border-b border-primary-200 bg-primary-50 p-5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-500"><ElectricalServicesOutlined aria-hidden="true" /></span>
+                  <div><h3 id="project-review-heading" className="text-base-bold">Review your project</h3><p className="mt-1 text-small text-neutral-700">{title}</p></div>
+                </div>
+                <div className="space-y-6 bg-neutral-50 p-4 sm:p-5">
+                  <div>
+                    <div className="mb-3 flex items-center justify-between gap-3"><h4 className="text-small-bold">Project details</h4><button type="button" className="min-h-11 text-small-bold underline underline-offset-4 hover:text-primary-800" onClick={() => move(0)}>Edit project</button></div>
+                    <dl className="grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-lg border border-neutral-200 bg-white p-4"><dt className="text-small text-neutral-700">Location</dt><dd className="mt-1 text-base-bold">{values.location === 'both' ? 'Indoors & outdoors' : values.location === 'indoors' ? 'Indoors' : 'Outdoors'}</dd></div>
+                      {ev ? <>
+                        <div className="rounded-lg border border-neutral-200 bg-white p-4"><dt className="text-small text-neutral-700">Installation</dt><dd className="mt-1 text-base-bold">{values.charger === 'hardwired' ? 'Hardwired charger' : 'NEMA 14-50 receptacle'}</dd></div>
+                        {values.charger === 'hardwired' && <div className="rounded-lg border border-neutral-200 bg-white p-4"><dt className="text-small text-neutral-700">Providing the charger</dt><dd className="mt-1 text-base-bold">{values.supply === 'yes' ? 'Yes' : 'No'}</dd></div>}
+                        <div className="rounded-lg border border-neutral-200 bg-white p-4"><dt className="text-small text-neutral-700">Within 10 feet of the panel</dt><dd className="mt-1 text-base-bold">{values.distance === 'unsure' ? 'Not sure' : values.distance === 'yes' ? 'Yes' : 'No'}</dd></div>
+                      </> : <>
+                        <div className="rounded-lg border border-neutral-200 bg-white p-4"><dt className="text-small text-neutral-700">Panels to replace</dt><dd className="mt-1 text-base-bold">{count}</dd></div>
+                        {Array.from({ length: count }, (_, i) => <div key={i} className="rounded-lg border border-neutral-200 bg-white p-4"><dt className="text-small text-neutral-700">Panel {i + 1} amperage</dt><dd className="mt-1 text-base-bold">{values.known !== 'yes' ? 'Not sure' : `${values[`amps${i}`] === 'other' ? values[`other${i}`] : values[`amps${i}`]} amps`}</dd></div>)}
+                      </>}
+                    </dl>
+                  </div>
+                  <div>
+                    <div className="mb-3 flex items-center justify-between gap-3"><h4 className="flex items-center gap-2 text-small-bold">{needsPhotos ? <ImageOutlined fontSize="small" aria-hidden="true" /> : <CalendarMonthOutlined fontSize="small" aria-hidden="true" />}{needsPhotos ? `Photos · ${activePhotoKeys.filter(key => photos[key]).length}` : 'Visit preferences'}</h4><button type="button" className="min-h-11 text-small-bold underline underline-offset-4 hover:text-primary-800" onClick={() => move(1)}>{needsPhotos ? 'Edit photos' : 'Edit times'}</button></div>
+                    {needsPhotos ? <ul className="grid gap-3 sm:grid-cols-2">{activePhotoKeys.filter(key => photos[key]).map(key => <ReviewPhoto key={key} file={photos[key]!} />)}</ul> : <>
+                      <ol className="space-y-3">{[0, 1, 2].map(i => <li key={i} className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-small-bold">{i + 1}</span><div><p className="text-small-bold">{friendlyDate(values[`date${i}`])}</p><p className="mt-1 text-small text-neutral-700">{friendlyTime(values[`from${i}`])}–{friendlyTime(values[`to${i}`])} Pacific</p></div></li>)}</ol>
+                      <p className="mt-3 text-small text-neutral-700">Preferred times only. Your appointment is not yet confirmed.</p>
+                    </>}
+                  </div>
+                </div>
+              </section>
             </>}
             {backendError && <p role="alert" className="text-small text-negative-700">The form is temporarily unavailable. Please refresh and try again.</p>}
             {savedReference && <p className="text-small break-all">Saved request: {savedReference}.</p>}
             {error && <p role="alert" className="rounded bg-negative-50 p-4 text-small text-negative-700">{error}</p>}
-            <div className="flex flex-wrap justify-between gap-4 border-t border-neutral-200 pt-6">{step > 0 ? <Button variant="secondary" label="Back" disabled={busy} onClick={() => move(step - 1)} /> : <span />}<Button type="submit" disabled={busy || (step === 2 && !limits)} label={busy ? 'Saving your request…' : step === 2 ? 'Request my free estimate' : 'Continue'} /></div>
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 pt-6">{step > 0 ? <Button variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back" disabled={busy} onClick={() => move(step - 1)} /> : <span />}<Button type="submit" disabled={busy || (step === 2 && !limits)} label={busy ? 'Saving your request…' : step === 2 ? 'Request my free estimate' : 'Continue'} /></div>
           </form>
         </>}
       </section>

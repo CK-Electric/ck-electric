@@ -9,13 +9,13 @@ if (!defined('ABSPATH')) { exit; }
 
 function ck_estimates_enabled() {
     return defined('CK_ESTIMATES_LOCAL_MODE') && CK_ESTIMATES_LOCAL_MODE === true
-        && wp_parse_url(home_url(), PHP_URL_HOST) === 'ck-electric.local'
+        && in_array(wp_parse_url(home_url(), PHP_URL_HOST), array('ck-electric.local', 'ckelectric-1.local'), true)
         && defined('CK_ESTIMATES_LOCAL_TOKEN') && strlen(CK_ESTIMATES_LOCAL_TOKEN) >= 32
         && defined('CK_ESTIMATES_PRIVATE_DIR');
 }
 function ck_estimates_table() { global $wpdb; return $wpdb->prefix . 'ck_estimate_requests'; }
 function ck_estimates_install() {
-    if (!ck_estimates_enabled()) { wp_die('This test plugin requires explicit local configuration on ck-electric.local.'); }
+    if (!ck_estimates_enabled()) { wp_die('This test plugin requires explicit local configuration on an allowed local site.'); }
     global $wpdb;
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     $table = ck_estimates_table(); $collate = $wpdb->get_charset_collate();

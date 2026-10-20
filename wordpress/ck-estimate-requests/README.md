@@ -16,18 +16,17 @@ and verified before deployment. Existing hosted lead forms are unchanged.
 
 ## Local installation currently in use
 
-- WordPress: `http://ck-electric.local`
-- Plugin: DevKinsta `public/ck-electric/wp-content/plugins/ck-estimate-requests/`
-- Local configuration: `public/ck-electric/wp-content/mu-plugins/ck-local-estimate-config.php`
+- WordPress: `http://ckelectric-1.local` (refreshed from production)
+- Plugin: DevKinsta `public/ckelectric-1/wp-content/plugins/ck-estimate-requests/`
+- Local configuration: `public/ckelectric-1/wp-content/mu-plugins/ck-local-estimate-config.php`
 - Database table: WordPress prefix + `ck_estimate_requests`
-- Private photos: DevKinsta `private/ck-electric-estimates/<request UUID>/`
+- Private photos: DevKinsta `private/ckelectric-1-estimates/<request UUID>/`
 - Next.js configuration: ignored `client/.env.local` variables
   `CK_LOCAL_ESTIMATES_URL` and `CK_LOCAL_ESTIMATES_TOKEN` (never `NEXT_PUBLIC_*`).
 
 The local configuration defines `CK_ESTIMATES_LOCAL_MODE=true`, a random shared
 `CK_ESTIMATES_LOCAL_TOKEN`, and `CK_ESTIMATES_PRIVATE_DIR` outside the site's web
-root. The plugin also requires WordPress's configured hostname to be exactly
-`ck-electric.local`. Configuration and private files must not be deployed to Kinsta.
+root. The plugin also requires WordPress's configured hostname to be one of the explicitly allowed local sites. Configuration and private files must not be deployed to Kinsta.
 
 The source in this folder is copied into DevKinsta; it is not automatically synced.
 After source edits, copy the plugin PHP file to the local plugin folder. Activation
@@ -67,7 +66,7 @@ No live CRM calls or email are made. Tests intentionally leave records for inspe
 Inspect summary records without an admin screen:
 
 ```sh
-docker exec devkinsta_fpm wp --allow-root --path=/www/kinsta/public/ck-electric db query \
+docker exec devkinsta_fpm wp --allow-root --path=/www/kinsta/public/ckelectric-1 db query \
   'SELECT request_id,kind,status,attempts,created_at FROM wp_ck_estimate_requests ORDER BY created_at DESC LIMIT 20;'
 ```
 
