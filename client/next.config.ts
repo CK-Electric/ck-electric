@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
+const personalMirror = /^https:\/\/github\.com\/erikaaquino\/ck-electric2(?:\.git)?$/.test(process.env.REPOSITORY_URL || '');
+
 const nextConfig: NextConfig = {
+  // Only the personal Netlify mirror exposes the disconnected review forms.
+  env: { CK_FORMS_DEMO: personalMirror ? 'true' : 'false' },
   images: {
     remotePatterns: [
       // Production WordPress on Kinsta
