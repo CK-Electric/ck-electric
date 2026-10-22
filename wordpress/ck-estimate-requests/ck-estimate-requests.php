@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CK Estimate Requests
  * Description: Secure estimate request intake with server-configured Housecall Pro delivery.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Requires PHP: 7.4
  */
 if (!defined('ABSPATH')) { exit; }
