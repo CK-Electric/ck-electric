@@ -2,9 +2,18 @@ import type { NextConfig } from "next";
 
 const personalMirror = /^https:\/\/github\.com\/erikaaquino\/ck-electric2(?:\.git)?$/.test(process.env.REPOSITORY_URL || '');
 
+const stagingForms = process.env.CK_ENABLE_STAGING_FORMS === 'true' && process.env.SITE_NAME === 'ck-electric-forms-staging';
+const productionForms = process.env.CK_ENABLE_PRODUCTION_FORMS === 'true' &&
+  process.env.CONTEXT === 'production' && process.env.URL === 'https://ckelectricllp.com' && !stagingForms;
+const localFormDemo = process.env.NODE_ENV === 'development' && process.env.CK_ENABLE_LOCAL_FORM_DEMO === 'true';
+
 const nextConfig: NextConfig = {
-  // Only the personal Netlify mirror exposes the disconnected review forms.
-  env: { CK_FORMS_DEMO: personalMirror ? 'true' : 'false' },
+  // The production forms require the exact company production deploy context and domain.
+  env: {
+    CK_FORMS_DEMO: localFormDemo || (personalMirror && !stagingForms && !productionForms) ? 'true' : 'false',
+    CK_FORMS_STAGING: stagingForms ? 'true' : 'false',
+    CK_FORMS_PRODUCTION: productionForms ? 'true' : 'false',
+  },
   images: {
     remotePatterns: [
       // Production WordPress on Kinsta

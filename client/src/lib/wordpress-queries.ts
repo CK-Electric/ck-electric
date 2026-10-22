@@ -334,6 +334,21 @@ export const GET_PROJECTS_PAGE = `
   }
 `;
 
+export const GET_ESTIMATE_FORM_MASCOT = `
+  query EstimateFormMascot {
+    page(id: "cG9zdDoxMjI=") {
+      landingPage {
+        formImage {
+          node {
+            mediaItemUrl
+            altText
+          }
+        }
+      }
+    }
+  }
+`;
+
 export const GET_BLOG_PAGE = `
   query NewQuery {
     page(id: "cG9zdDoyNDk=") {
