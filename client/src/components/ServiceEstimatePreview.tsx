@@ -193,7 +193,7 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false, produ
     } finally { submitting.current = false; setBusy(false); }
   }
   const title = ev ? 'EV charger installation' : 'Panel replacement';
-  return <div className="bg-neutral-50 px-4 py-8 md:py-12 text-neutral-950">
+  return <div className="estimate-form-theme bg-neutral-50 px-4 py-8 md:py-12 text-neutral-950">
     <div className="mx-auto max-w-3xl">
       {busy ? <Button variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back" disabled className="mb-8 min-h-11 cursor-not-allowed opacity-50" /> : <Button href="/request-estimate" variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back" className="mb-8 min-h-11" />}
       <p className="text-small-upper text-primary-800 mb-3">Request a free estimate</p>
