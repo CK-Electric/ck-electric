@@ -1,103 +1,46 @@
-# Local estimate backend
+# CK Estimate Requests
 
-This is a **development-only** WordPress plugin. It saves real local records and
-private photo files, then processes them with a mock CRM adapter. It contains no
-Housecall Pro HTTP client, email sender, or notification integration. It is not a
-production-ready plugin and cannot be enabled merely by installing it in production.
+Custom WordPress plugin for receiving estimate requests from the CK Electric
+website. It validates request fields and uploaded photos, saves them before
+processing, and provides an administrator-only screen for reviewing delivery
+status and safely retrying eligible failures.
 
-## Architecture
+## Runtime contents
 
-Browser → development-only Next.js `/api/local-estimates` → authenticated local
-WordPress REST endpoint → database + private files → mock CRM result.
+The plugin runtime consists of `ck-estimate-requests.php` and the PHP files in
+`includes/`. Keep the `tests/` directory out of the installable plugin package.
+Installing this plugin does not configure credentials or enable public delivery.
 
-The local Next.js relay avoids browser CORS configuration and keeps the connection
-token server-side. Production upload routing and hosting limits remain to be designed
-and verified before deployment. Existing hosted lead forms are unchanged.
+## Configuration and security
 
-## Local installation currently in use
+Configure each environment separately in server-side WordPress configuration.
+The plugin requires an explicitly enabled environment, a private connection
+token, and a writable private storage directory outside the public web root.
+Housecall Pro delivery is controlled separately. Store its API key in a
+restricted file outside the web root and configure only the file path on the
+server. Never commit credentials or expose them through browser-visible
+environment variables.
 
-- WordPress: `http://ckelectric-1.local` (refreshed from production)
-- Plugin: DevKinsta `public/ckelectric-1/wp-content/plugins/ck-estimate-requests/`
-- Local configuration: `public/ckelectric-1/wp-content/mu-plugins/ck-local-estimate-config.php`
-- Database table: WordPress prefix + `ck_estimate_requests`
-- Private photos: DevKinsta `private/ckelectric-1-estimates/<request UUID>/`
-- Next.js configuration: ignored `client/.env.local` variables
-  `CK_LOCAL_ESTIMATES_URL` and `CK_LOCAL_ESTIMATES_TOKEN` (never `NEXT_PUBLIC_*`).
+The plugin fails closed when the site host, WordPress environment, or required
+server configuration does not match. The WordPress admin screen requires the
+administrator capability. Private photo downloads use authenticated admin
+actions and request-specific nonces.
 
-The local configuration defines `CK_ESTIMATES_LOCAL_MODE=true`, a random shared
-`CK_ESTIMATES_LOCAL_TOKEN`, and `CK_ESTIMATES_PRIVATE_DIR` outside the site's web
-root. The plugin also requires WordPress's configured hostname to be one of the explicitly allowed local sites. Configuration and private files must not be deployed to Kinsta.
+## Processing behavior
 
-The source in this folder is copied into DevKinsta; it is not automatically synced.
-After source edits, copy the plugin PHP file to the local plugin folder. Activation
-creates the table. Do not copy WordPress core, databases, or local secrets into git.
+Requests and photos are saved before processing. Normal form submissions are
+processed synchronously; they do not require a scheduled worker. The plugin
+records delivery steps and verifies Housecall Pro records before marking a
+request complete. Uncertain outcomes require review instead of automatic
+replay. Eligible retries are available to administrators after a cooldown.
 
-## Manual testing
+## Tests
 
-Open the EV or panel form at localhost:3000/request-estimate/ev-charger or
-localhost:3000/request-estimate/panel-replacement. Use synthetic contact details.
+The `tests/` directory contains offline contract tests and WordPress-backed
+checks. Run those only in an isolated test WordPress environment; never run
+write-capable tests against a live site. The legacy local smoke script is not a
+deployment test.
 
-1. Complete the project questions and required photos/visit preferences.
-2. Enter contact details and submit. Confirmation means the request is saved locally.
-3. The presentation UI has no debugging controls. Use the integration test below
-   to exercise simulated failures and retries.
-4. Retrying the same request ID completes the existing record, increments its
-   attempts counter, and creates no duplicate row/photo folder.
-5. Editing answers or photos creates a new request identifier. A successful identical
-   resubmission returns the original receipt without reprocessing.
-
-The browser reads actual PHP upload limits. Effective limits are at most 15 MB per
-file, 30 MB total, and 18 files, reduced if PHP configuration is stricter. File content
-is inspected server-side; HEIC support depends on server MIME detection. No image
-compression or format conversion is implemented yet.
-
-## Verification
-
-With Next.js and DevKinsta running:
-
-```sh
-python3 wordpress/ck-estimate-requests/tests/local-smoke.py
-```
-
-Tests create synthetic records locally, including photo uploads, failure/retry,
-duplicate prevention, invalid fields/images, and disallowed browser origins.
-No live CRM calls or email are made. Tests intentionally leave records for inspection.
-
-Inspect summary records without an admin screen:
-
-```sh
-docker exec devkinsta_fpm wp --allow-root --path=/www/kinsta/public/ckelectric-1 db query \
-  'SELECT request_id,kind,status,attempts,created_at FROM wp_ck_estimate_requests ORDER BY created_at DESC LIMIT 20;'
-```
-
-Use the table's `payload`, `photos`, and `result` columns for deeper local debugging.
-Photo paths are never returned to the browser and are not WordPress media attachments.
-There is no public listing or download endpoint.
-
-## Boundaries / remaining production work
-
-### Personal mirror review
-
-Netlify builds linked to `https://github.com/erikaaquino/ck-electric2` expose
-`/request-estimate/ev-charger` and `/request-estimate/panel-replacement` as UI demos.
-The build checks Netlify's `REPOSITORY_URL`; other production builds keep these
-routes unavailable. Demo answers and photos stay in browser memory, and the final
-screen explicitly confirms that nothing was submitted or saved. The local API
-remains unavailable in production. No WordPress credentials or Housecall Pro key
-are needed for this review mode.
-
-### Before live submissions
-
-- No admin dashboard, automatic retry worker, office alerting, or live API adapter.
-- Records and photos persist locally until deliberately cleaned up; there is no
-  automatic retention cleanup yet. Refreshing clears unsaved browser state only.
-- A saved failed request can be retried through the current browser session. Resuming
-  after refresh and recovery after process interruption need a future recovery flow.
-- Concurrent retries are serialized by a MySQL advisory lock and the request UUID is
-  a database primary key. Fingerprints prevent reusing an ID with different content.
-- Mock processing is synchronous. Production needs durable staged processing and
-  reconciliation for uncertain CRM results before retrying record creation.
-- Production requires API access verification, real endpoint contracts, spam/rate
-  controls, retention/recovery, delivery monitoring, and hosting upload tests.
-- Pulling another WordPress database into DevKinsta can replace local test records
-  or plugin activation state. Preserve any needed local tests first.
+PHP syntax can be checked with `php -l` on the plugin files. End-to-end
+verification must use a controlled staging environment and synthetic request
+data.

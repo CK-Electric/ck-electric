@@ -1,21 +1,16 @@
 <?php
 /**
- * Plugin Name: CK Estimate Requests (Local Test)
- * Description: Development-only persistent estimate requests with a simulated CRM adapter. No email or outbound CRM calls.
- * Version: 0.1.0
+ * Plugin Name: CK Estimate Requests
+ * Description: Secure estimate request intake with server-configured Housecall Pro delivery.
+ * Version: 0.3.0
  * Requires PHP: 7.4
  */
 if (!defined('ABSPATH')) { exit; }
 
-function ck_estimates_enabled() {
-    return defined('CK_ESTIMATES_LOCAL_MODE') && CK_ESTIMATES_LOCAL_MODE === true
-        && in_array(wp_parse_url(home_url(), PHP_URL_HOST), array('ck-electric.local', 'ckelectric-1.local'), true)
-        && defined('CK_ESTIMATES_LOCAL_TOKEN') && strlen(CK_ESTIMATES_LOCAL_TOKEN) >= 32
-        && defined('CK_ESTIMATES_PRIVATE_DIR');
-}
+require_once __DIR__ . '/includes/environment.php';
 function ck_estimates_table() { global $wpdb; return $wpdb->prefix . 'ck_estimate_requests'; }
 function ck_estimates_install() {
-    if (!ck_estimates_enabled()) { wp_die('This test plugin requires explicit local configuration on an allowed local site.'); }
+    if (!ck_estimates_enabled()) { wp_die('This plugin requires explicit local or staging configuration on an allowed host.'); }
     global $wpdb;
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
     $table = ck_estimates_table(); $collate = $wpdb->get_charset_collate();
@@ -30,14 +25,23 @@ function ck_estimates_install() {
         attempts int NOT NULL DEFAULT 0,
         created_at datetime NOT NULL,
         updated_at datetime NOT NULL,
-        PRIMARY KEY  (request_id)
+        available_at datetime DEFAULT NULL,
+        PRIMARY KEY  (request_id),
+        KEY queue_due (status, available_at)
     ) $collate;");
 }
 register_activation_hook(__FILE__, 'ck_estimates_install');
+add_action('init', function () {
+    if (ck_estimates_enabled() && get_option('ck_estimates_schema') !== '2') {
+        ck_estimates_install();
+        global $wpdb;
+        if ($wpdb->get_var("SHOW COLUMNS FROM " . ck_estimates_table() . " LIKE 'available_at'")) { update_option('ck_estimates_schema', '2', false); }
+    }
+}, 1);
 function ck_estimates_error($message, $status = 422) { return new WP_Error('ck_estimates_error', $message, array('status' => $status)); }
 function ck_estimates_permission($request) {
-    if (!ck_estimates_enabled()) { return ck_estimates_error('Local integration is disabled.', 404); }
-    if (!hash_equals('Bearer ' . CK_ESTIMATES_LOCAL_TOKEN, (string) $request->get_header('authorization'))) {
+    if (!ck_estimates_enabled()) { return ck_estimates_error('Estimate integration is disabled.', 404); }
+    if (!hash_equals('Bearer ' . ck_estimates_connection_token(), (string) $request->get_header('authorization'))) {
         return ck_estimates_error('Unauthorized.', 401);
     }
     return true;
@@ -45,7 +49,8 @@ function ck_estimates_permission($request) {
 function ck_estimates_limits() {
     return array('file_bytes' => min(15 * MB_IN_BYTES, wp_max_upload_size()),
         'total_bytes' => min(30 * MB_IN_BYTES, max(0, wp_convert_hr_to_bytes(ini_get('post_max_size')) - MB_IN_BYTES)),
-        'max_files' => min(18, (int) ini_get('max_file_uploads')), 'mode' => 'local-mock');
+        'max_files' => min(18, (int) ini_get('max_file_uploads')),
+        'mode' => ck_estimates_delivery_mode() === 'hcp' ? 'housecall-pro' : 'local-mock');
 }
 add_action('rest_api_init', function () {
     if (!ck_estimates_enabled()) { return; }
@@ -124,13 +129,23 @@ function ck_estimates_validate($raw, $kind) {
     return array('payload' => $clean, 'required' => $required, 'allowed' => array_merge($required, $allowed));
 }
 function ck_estimates_receipt($row) {
+    $result = json_decode($row->result, true) ?: array();
+    $mode = ($result['adapter'] ?? 'mock') === 'hcp' ? 'housecall-pro' : 'local-mock';
+    $message = 'Your request is saved.';
+    if ($mode === 'local-mock' && $row->status === 'completed') { $message = 'This is a test submission. It was not sent to Housecall Pro.'; }
+    elseif ($row->status === 'completed') { $message = 'Your request was received. The CK Electric team will follow up.'; }
+    elseif ($row->status === 'needs_attention') { $message = 'Your details are saved, but we could not confirm delivery. Please contact CK Electric and share this reference.'; }
+    elseif (in_array($row->status, array('received', 'processing', 'retry_wait'), true)) { $message = 'Your details are saved and are still being submitted. Keep this reference; contact CK Electric if you do not hear back.'; }
     return array('reference' => 'LOCAL-' . $row->request_id, 'status' => $row->status,
-        'mode' => 'local-mock', 'saved' => true, 'attempts' => (int) $row->attempts,
+        'mode' => $mode, 'saved' => true, 'attempts' => (int) $row->attempts,
         'photo_count' => count(json_decode($row->photos, true) ?: array()),
-        'processing' => json_decode($row->result, true), 'notification' => 'disabled');
+        'processing' => array('message' => $message), 'notification' => 'disabled');
 }
 function ck_estimates_submit($request) {
     global $wpdb;
+    if (!empty($request->get_param('contact_website'))) {
+        return ck_estimates_error('Could not submit this request. Please try again.');
+    }
     $id = $request->get_param('request_id');
     if (!is_string($id) || !preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/', $id)) { return ck_estimates_error('Invalid request identifier.'); }
     $kind = $request->get_param('kind');
@@ -158,12 +173,13 @@ function ck_estimates_submit($request) {
     // A per-request database lock serializes retries, including simultaneous clicks.
     $lock = 'ck-estimate-' . $id;
     if ((int) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 0)', $lock)) !== 1) { return ck_estimates_error('This request is still processing. Please retry shortly.', 409); }
+    $process_now = false;
     try {
         $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE request_id = %s", $id));
         if ($row) {
             if (!hash_equals($row->fingerprint, $fingerprint)) { return ck_estimates_error('This reference belongs to different answers. Start a new request.', 409); }
-            if ($row->status === 'completed') { return new WP_REST_Response(ck_estimates_receipt($row), 200); }
-            if ($row->status !== 'needs_attention') { return ck_estimates_error('This saved request needs a local storage check before retrying.', 409); }
+            $process_now = in_array($row->status, array('received', 'processing'), true)
+                || ($row->status === 'retry_wait' && (!$row->available_at || strtotime($row->available_at . ' UTC') <= time()));
         } else {
             $root = realpath(CK_ESTIMATES_PRIVATE_DIR); $public = realpath(ABSPATH);
             if (!$root || !$public || strpos($root . '/', $public . '/') === 0 || !is_writable($root)) { return ck_estimates_error('Private local storage is unavailable.', 503); }
@@ -181,22 +197,27 @@ function ck_estimates_submit($request) {
             }
             $saved = $wpdb->insert($table, array('request_id' => $id, 'fingerprint' => $fingerprint, 'kind' => $kind,
                 'status' => 'received', 'payload' => wp_json_encode($checked['payload']), 'photos' => wp_json_encode($manifest),
-                'result' => '{}', 'attempts' => 0, 'created_at' => gmdate('Y-m-d H:i:s'), 'updated_at' => gmdate('Y-m-d H:i:s')));
+                'result' => wp_json_encode(array('adapter' => ck_estimates_delivery_mode(), 'simulate_failure' => ck_estimates_environment() === 'local' && ck_estimates_delivery_mode() === 'mock' && $request->get_param('simulate_failure') === '1')), 'attempts' => 0, 'created_at' => gmdate('Y-m-d H:i:s'), 'updated_at' => gmdate('Y-m-d H:i:s')));
             if (!$saved) {
                 foreach ($manifest as $photo) { unlink($photo['path']); } rmdir($dir);
                 return ck_estimates_error('Could not save this request. Please retry.', 503);
             }
             $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE request_id = %s", $id));
+            $process_now = true;
         }
-        // This adapter is deliberately incapable of making HTTP requests or sending mail.
-        $failed = $request->get_param('simulate_failure') === '1';
-        $result = array('adapter' => 'mock', 'customer' => 'simulated', 'estimate' => $failed ? 'simulated_failure' : 'SIM-' . $id,
-            'notes' => $failed ? 'pending' : 'simulated', 'photos' => $failed ? 'pending' : 'simulated',
-            'message' => $failed ? 'Saved locally. Uncheck simulated failure and retry the same request.' : 'Saved locally and processed by the mock adapter.');
-        $updated = $wpdb->update($table, array('status' => $failed ? 'needs_attention' : 'completed', 'result' => wp_json_encode($result),
-            'attempts' => (int) $row->attempts + 1, 'updated_at' => gmdate('Y-m-d H:i:s')), array('request_id' => $id));
-        if ($updated === false) { return ck_estimates_error('Saved locally, but processing status could not be updated.', 503); }
-        $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE request_id = %s", $id));
-        return new WP_REST_Response(ck_estimates_receipt($row), $failed ? 202 : 201);
     } finally { $wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock)); }
+    // The request and private photos are durable before any CRM network call starts.
+    // The normal delivery path is synchronous; the existing scheduled sweep remains
+    // a recovery path for interrupted work and safe transient retries.
+    if ($process_now) { ck_estimates_process($id); }
+    $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE request_id = %s", $id));
+    if (!$row) { return ck_estimates_error('Your request could not be confirmed. Please try again with the same answers.', 503); }
+    $code = in_array($row->status, array('received', 'processing', 'retry_wait'), true) ? 202 : 200;
+    return new WP_REST_Response(ck_estimates_receipt($row), $code);
 }
+
+// Live acceptance tests are CLI-only; browser submissions remain mock.
+if (defined('WP_CLI') && WP_CLI) { require_once __DIR__ . '/includes/hcp-cli.php'; }
+
+require_once __DIR__ . '/includes/queue.php';
+require_once __DIR__ . '/includes/admin.php';
