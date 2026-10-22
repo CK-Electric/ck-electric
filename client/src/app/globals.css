@@ -8,6 +8,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Estimate forms use the CK Electric light palette even when a visitor prefers dark mode. */
+.estimate-form-theme {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: var(--color-neutral-950);
+}
+
 /* Custom utility classes */
 .clip-diagonal {
   clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
