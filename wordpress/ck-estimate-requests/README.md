@@ -38,8 +38,7 @@ replay. Eligible retries are available to administrators after a cooldown.
 
 The `tests/` directory contains offline contract tests and WordPress-backed
 checks. Run those only in an isolated test WordPress environment; never run
-write-capable tests against a live site. The legacy local smoke script is not a
-deployment test.
+write-capable tests against a live site.
 
 PHP syntax can be checked with `php -l` on the plugin files. End-to-end
 verification must use a controlled staging environment and synthetic request
