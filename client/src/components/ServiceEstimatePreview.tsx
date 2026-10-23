@@ -219,8 +219,8 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false, produ
           <h2 ref={heading} tabIndex={-1} className="text-display-4 mb-3">{['About your project', needsPhotos ? 'Project photos' : 'Preferred visit times', 'Your contact details'][step]}</h2>
           <p className="mb-2 text-small text-neutral-700">{step === 0 ? "Let’s start with what you have in mind." : step === 1 ? (needsPhotos ? "A couple of clear photos help us understand your setup." : "Let us know which days and times work best for you.") : "You’re almost there. Add your details and review your project."}</p>
           <p className="mb-6 text-small text-neutral-700">Fields marked * are required.</p>
-          <form ref={form} aria-busy={busy} onSubmit={e => { e.preventDefault(); void advance(); }} className="space-y-8">
-            <fieldset disabled={busy} aria-label="Estimate request fields" className="contents">
+          <form ref={form} aria-busy={busy} onSubmit={e => { e.preventDefault(); void advance(); }}>
+            <fieldset disabled={busy} aria-label="Estimate request fields" className="min-w-0 space-y-8 border-0 p-0">
             <div className="absolute -left-[10000px] h-px w-px overflow-hidden" aria-hidden="true">
               <label>Leave this field empty<input name="contact_website" type="text" autoComplete="off" tabIndex={-1} /></label>
             </div>
