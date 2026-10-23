@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ElectricalServicesOutlined from '@mui/icons-material/ElectricalServicesOutlined';
@@ -92,6 +93,7 @@ function ReviewPhoto({ file }: { file: File }) {
   </li>;
 }
 export default function ServiceEstimatePreview({ kind, hostedDemo = false, productionMode = false, successPreview = false, mascotImageUrl, mascotImageAlt = 'CK Electric eagle mascot' }: { kind: Kind; hostedDemo?: boolean; productionMode?: boolean; successPreview?: boolean; mascotImageUrl?: string; mascotImageAlt?: string }) {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Record<string, string>>({ state: 'WA', count: '1' });
   const [photos, setPhotos] = useState<Record<string, File | undefined>>({});
@@ -197,7 +199,10 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false, produ
   const title = ev ? 'EV charger installation' : 'Panel replacement';
   return <div className="estimate-form-theme bg-neutral-50 px-4 py-8 md:py-12 text-neutral-950">
     <div className="mx-auto max-w-3xl">
-      {busy ? <Button variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back" disabled className="mb-8 min-h-11 cursor-not-allowed opacity-50" /> : <Button href="/request-estimate" variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back" className="mb-8 min-h-11" />}
+      {busy ? <Button variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back" disabled className="mb-8 min-h-11 cursor-not-allowed opacity-50" /> : <Button variant="tertiary" icon={<ArrowBack fontSize="small" />} iconPosition="start" label="Back" className="mb-8 min-h-11" onClick={() => {
+        if (window.history.length > 1) router.back();
+        else router.push('/services');
+      }} />}
       <p className="text-small-upper text-primary-800 mb-3">Request a free estimate</p>
       <h1 className="text-display-3 md:text-display-2 mb-4">{title}</h1>
       <p className="text-base text-neutral-950 mb-8">A few details help us understand your project and prepare the next steps. No commitment required.</p>

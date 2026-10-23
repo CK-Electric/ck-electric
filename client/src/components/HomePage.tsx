@@ -3,6 +3,7 @@ import HomeStatsSection from './HomeStatsSection';
 import HomeAwardSection from './HomeAwardSection';
 import HomeAboutSection from './HomeAboutSection';
 import HomeServicesSection from './HomeServicesSection';
+import HomeEstimateFormsSection from './HomeEstimateFormsSection';
 import HomeServiceAreasSection from './HomeServiceAreasSection';
 import HomeOwnersSection from './HomeOwnersSection';
 import HomeProjectsSection from './HomeProjectsSection';
@@ -47,6 +48,7 @@ export default function HomePage({
       <HomeAwardSection />
       <HomeAboutSection landingPageData={landingPageData} />
       <HomeServicesSection servicesData={servicesData} />
+      <HomeEstimateFormsSection />
       <HomeServiceAreasSection serviceAreasData={serviceAreasData} contactPhone={contactPhone} />
       <HomeOwnersSection ownersData={ownersData} />
       <HomeProjectsSection projectsData={projectsData} />

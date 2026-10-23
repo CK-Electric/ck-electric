@@ -76,7 +76,7 @@ export default function HomeAboutSection({ landingPageData }: Props) {
             </ul>
 
             <div className="pt-8">
-              <Button label="Request Estimate" variant="primary" href="/request-estimate" />
+              <Button label="Contact Us" variant="primary" href="/contact" />
             </div>
           </div>
         </div>
