@@ -91,7 +91,7 @@ function ReviewPhoto({ file }: { file: File }) {
     <span className="min-w-0 break-words text-small">{file.name}</span>
   </li>;
 }
-export default function ServiceEstimatePreview({ kind, hostedDemo = false, productionMode = false, mascotImageUrl, mascotImageAlt = 'CK Electric eagle mascot' }: { kind: Kind; hostedDemo?: boolean; productionMode?: boolean; mascotImageUrl?: string; mascotImageAlt?: string }) {
+export default function ServiceEstimatePreview({ kind, hostedDemo = false, productionMode = false, successPreview = false, mascotImageUrl, mascotImageAlt = 'CK Electric eagle mascot' }: { kind: Kind; hostedDemo?: boolean; productionMode?: boolean; successPreview?: boolean; mascotImageUrl?: string; mascotImageAlt?: string }) {
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Record<string, string>>({ state: 'WA', count: '1' });
   const [photos, setPhotos] = useState<Record<string, File | undefined>>({});
@@ -106,8 +106,10 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false, produ
   const [savedReference, setSavedReference] = useState('');
   const [limits, setLimits] = useState<{ file_bytes: number; total_bytes: number; max_files: number } | null>(hostedDemo ? { file_bytes: 15 * 1024 * 1024, total_bytes: 30 * 1024 * 1024, max_files: 18 } : null);
   const [backendError, setBackendError] = useState('');
+  const displayedOutcome = successPreview ? 'received' : outcome;
+  const displayedReference = successPreview ? 'LOCAL-PREVIEW' : reference;
   useEffect(() => {
-    if (hostedDemo) return;
+    if (hostedDemo || successPreview) return;
     const controller = new AbortController();
     fetch('/api/local-estimates', { signal: controller.signal }).then(async response => {
       const data = await response.json();
@@ -118,7 +120,7 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false, produ
       setLimits(data);
     }).catch(error => { if (error.name !== 'AbortError') setBackendError(error.message); });
     return () => controller.abort();
-  }, [hostedDemo, productionMode]);
+  }, [hostedDemo, productionMode, successPreview]);
   function edited() { setRequestId(null); setSavedReference(''); setOutcome(null); setServerMessage(''); }
   const form = useRef<HTMLFormElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -200,24 +202,24 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false, produ
       <h1 className="text-display-3 md:text-display-2 mb-4">{title}</h1>
       <p className="text-base text-neutral-950 mb-8">A few details help us understand your project and prepare the next steps. No commitment required.</p>
       <section className="rounded-2xl border border-neutral-200 bg-background p-5 md:p-10 shadow-sm">
-        {reference ? <div role="status" className="space-y-5 py-4">
-          {hostedDemo || outcome === 'received' || outcome === 'wordpress-test' ? <div className="relative mb-2 flex min-h-36 items-center justify-center overflow-hidden rounded-2xl bg-primary-50 px-6 py-5 sm:min-h-44" aria-hidden="true">
+        {displayedReference ? <div role="status" className="space-y-5 py-4">
+          {hostedDemo || displayedOutcome === 'received' || displayedOutcome === 'wordpress-test' ? <div className="relative mb-2 flex min-h-36 items-center justify-center overflow-hidden rounded-2xl bg-primary-50 px-6 py-5 sm:min-h-44" aria-hidden="true">
             <span className="absolute left-[18%] top-7 text-2xl text-primary-600">✦</span>
             <span className="absolute right-[20%] top-10 text-xl text-primary-600">✦</span>
             <span className="absolute bottom-6 left-[28%] text-lg text-primary-500">✦</span>
             <span className="relative z-10">
               {mascotImageUrl ? <Image src={mascotImageUrl} alt={mascotImageAlt} width={112} height={128} sizes="112px" className="h-32 w-28 object-contain" /> : <CheckCircleOutline className="text-positive-600" fontSize="large" />}
-              <span className="absolute -right-2 top-0 flex h-9 w-9 items-center justify-center rounded-full border-2 border-background bg-positive-500 text-background shadow-sm"><Check fontSize="small" aria-hidden="true" /></span>
+              <span className="absolute -right-6 -top-2 flex h-9 w-9 items-center justify-center rounded-full border-2 border-background bg-positive-500 text-background shadow-sm"><Check fontSize="small" aria-hidden="true" /></span>
             </span>
             <span className="absolute bottom-8 right-[26%] text-lg text-primary-500">✦</span>
-          </div> : hostedDemo || outcome === 'test' ? <InfoOutlined className="text-primary-700" fontSize="large" aria-hidden="true" /> : outcome === 'attention' ? <ErrorOutline className="text-negative-700" fontSize="large" aria-hidden="true" /> : <CheckCircleOutline className="text-positive-600" fontSize="large" aria-hidden="true" />}
-          <h2 ref={heading} tabIndex={-1} className="text-display-4">{hostedDemo ? 'Request received' : outcome === 'wordpress-test' ? 'Request saved' : outcome === 'test' ? 'Test request saved' : outcome === 'attention' ? 'We saved your request' : outcome === 'pending' ? 'Your request is still processing' : 'Request received'}</h2>
-          <p className="text-base text-neutral-950">{hostedDemo ? 'Thanks for reaching out. The CK Electric team received your project details and will follow up. A price or appointment is not confirmed yet.' : outcome === 'wordpress-test' ? 'Your project details and photos were saved to your local WordPress site. This local test was not sent to Housecall Pro.' : outcome === 'test' ? (serverMessage || 'This is a test submission. It was not sent to Housecall Pro.') : outcome === 'attention' ? (serverMessage || 'Your project details are saved, but we could not confirm delivery. Please contact CK Electric and share this reference.') : outcome === 'pending' ? (serverMessage || 'Your project details are saved and are still being submitted. Keep this reference, and contact CK Electric if you do not hear back.') : (serverMessage || 'Thanks for reaching out. The CK Electric team received your project details and will follow up. A price or appointment is not confirmed yet.')}</p>
-          <p className="text-small break-all">Reference: <strong>{reference}</strong></p><Button href="/services" variant="secondary" label="Explore our services" /></div> : <>
+          </div> : hostedDemo || displayedOutcome === 'test' ? <InfoOutlined className="text-primary-700" fontSize="large" aria-hidden="true" /> : displayedOutcome === 'attention' ? <ErrorOutline className="text-negative-700" fontSize="large" aria-hidden="true" /> : <CheckCircleOutline className="text-positive-600" fontSize="large" aria-hidden="true" />}
+          <h2 ref={heading} tabIndex={-1} className="text-display-4">{hostedDemo ? 'Request received' : displayedOutcome === 'wordpress-test' ? 'Request saved' : displayedOutcome === 'test' ? 'Test request saved' : displayedOutcome === 'attention' ? 'We saved your request' : displayedOutcome === 'pending' ? 'Your request is still processing' : 'Request received'}</h2>
+          <p className="text-base text-neutral-950">{hostedDemo ? 'Thanks for reaching out. The CK Electric team received your project details and will follow up. A price or appointment is not confirmed yet.' : displayedOutcome === 'wordpress-test' ? 'Your project details and photos were saved to your local WordPress site. This local test was not sent to Housecall Pro.' : displayedOutcome === 'test' ? (serverMessage || 'This is a test submission. It was not sent to Housecall Pro.') : displayedOutcome === 'attention' ? (serverMessage || 'Your project details are saved, but we could not confirm delivery. Please contact CK Electric and share this reference.') : displayedOutcome === 'pending' ? (serverMessage || 'Your project details are saved and are still being submitted. Keep this reference, and contact CK Electric if you do not hear back.') : (serverMessage || 'Thanks for reaching out. The CK Electric team received your project details and will follow up. A price or appointment is not confirmed yet.')}</p>
+          {displayedOutcome !== 'received' && <p className="text-small break-all">Reference: <strong>{displayedReference}</strong></p>}<Button href="/services" variant="secondary" label="Explore our services" /></div> : <>
           <ol className="mb-8 grid grid-cols-3 gap-2 text-small" aria-label="Progress">{['Project', needsPhotos ? 'Photos' : 'Visit preferences', 'Contact & review'].map((label, i) => <li key={i} aria-current={step === i ? 'step' : undefined} className={`border-t-4 pt-3 ${i <= step ? 'border-primary-500 text-neutral-950' : 'border-neutral-200 text-neutral-700'}`}><span className="mb-2 flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 text-small-bold" aria-hidden="true">{i < step ? <CheckCircleOutline fontSize="small" className="text-primary-800" /> : i + 1}</span>{label}</li>)}</ol>
           <p className="mb-2 text-small-bold text-primary-800">Step {step + 1} of 3</p>
           <h2 ref={heading} tabIndex={-1} className="text-display-4 mb-3">{['About your project', needsPhotos ? 'Project photos' : 'Preferred visit times', 'Your contact details'][step]}</h2>
-          <p className="mb-2 text-small text-neutral-700">{step === 0 ? "Let’s start with what you have in mind." : step === 1 ? (needsPhotos ? "A couple of clear photos help us understand your setup." : "Let us know which days and times work best for you.") : "You’re almost there. Add your details and review your project."}</p>
+          {step !== 0 && <p className="mb-2 text-small text-neutral-700">{step === 1 ? (needsPhotos ? "A couple of clear photos help us understand your setup." : "Let us know which days and times work best for you.") : "You’re almost there. Add your details and review your project."}</p>}
           <p className="mb-6 text-small text-neutral-700">Fields marked * are required.</p>
           <form ref={form} aria-busy={busy} onSubmit={e => { e.preventDefault(); void advance(); }}>
             <fieldset disabled={busy} aria-label="Estimate request fields" className="min-w-0 space-y-8 border-0 p-0">
