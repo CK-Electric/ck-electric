@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     CK_FORMS_DEMO: localFormDemo || (personalMirror && !stagingForms && !productionForms) ? 'true' : 'false',
     CK_FORMS_STAGING: stagingForms ? 'true' : 'false',
     CK_FORMS_PRODUCTION: productionForms ? 'true' : 'false',
+    CK_NETLIFY_LIVE_NOTIFICATIONS: productionForms && process.env.CK_ENABLE_NETLIFY_LIVE_NOTIFICATIONS === 'true' ? 'true' : 'false',
   },
   images: {
     remotePatterns: [

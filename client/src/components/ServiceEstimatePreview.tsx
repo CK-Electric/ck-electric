@@ -17,6 +17,7 @@ import EditOutlined from '@mui/icons-material/EditOutlined';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import EstimateDatePicker, { friendlyDate, friendlyTime } from './EstimateDatePicker';
 import Button from './Button';
+import { sendNetlifyLiveNotification } from '@/lib/netlify-estimate-test';
 
 type Kind = 'ev' | 'panel';
 const inputClass = 'mt-2 block min-h-14 w-full min-w-0 rounded-lg border border-neutral-300 bg-background px-4 py-3 text-base transition-colors hover:border-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100';
@@ -105,6 +106,7 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false, produ
   const [serverMessage, setServerMessage] = useState('');
   const [requestId, setRequestId] = useState<string | null>(null);
   const submitting = useRef(false);
+  const notified = useRef(new Set<string>());
   const [savedReference, setSavedReference] = useState('');
   const [limits, setLimits] = useState<{ file_bytes: number; total_bytes: number; max_files: number } | null>(hostedDemo ? { file_bytes: 15 * 1024 * 1024, total_bytes: 30 * 1024 * 1024, max_files: 18 } : null);
   const [backendError, setBackendError] = useState('');
@@ -185,6 +187,14 @@ export default function ServiceEstimatePreview({ kind, hostedDemo = false, produ
       if (!response.ok || !result.saved) throw new Error(result.message || 'Something went wrong, and we couldn’t confirm your form was sent. Your answers are still here—please try again.');
       setSavedReference(result.reference);
       setServerMessage(result.processing?.message || '');
+      if (productionMode && process.env.CK_NETLIFY_LIVE_NOTIFICATIONS === 'true' && result.mode === 'housecall-pro' && !notified.current.has(result.reference)) {
+        try {
+          await sendNetlifyLiveNotification(kind, values, result.reference, result.status);
+          notified.current.add(result.reference);
+        } catch {
+          // WordPress has already saved the request; email must not change the receipt.
+        }
+      }
       if (!['received', 'retry_wait', 'processing', 'completed', 'needs_attention'].includes(result.status)) {
         setError('Your details were saved. Please contact us with the reference below to check their status.'); return;
       }
